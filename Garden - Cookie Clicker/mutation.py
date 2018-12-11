@@ -73,6 +73,9 @@ class Plant:
         print("Dies in %d ticks" % (self.life))
         print("Stays mature for %d\n" % (self.mat_age))
 
+        self.print_mutations()
+
+    def print_mutations(self):
         print("{:-^40}".format(" Mutated from "))
 
         if self.muts is []:
@@ -307,7 +310,7 @@ class Mutation:
             else:
                 self.conditions += [self.Condition(garden.get_plant(x))]
 
-    def __str__(self):
+    def __repr__(self):
         string = ""
 
         string += "Mutation rate = %.4lf" % (self.mut_rate)
@@ -325,7 +328,7 @@ class Mutation:
             self.exactF = False
             self.lessT = False
 
-        def __str__(self):
+        def __repr__(self):
             status_str = ""
 
             if self.status == "M":
@@ -340,26 +343,34 @@ class Mutation:
             elif self.lessT is True:
                 return "Less than %s of %s%s" % (self.quantity, status_str, self.plant.name)
 
-        
+def basic_garden(garden):
+    wood_chips = input("Are you using wood chip? (Y for yes, N for no) : ")
 
-# wood_chips = input("Are you using wood chip? (Y for yes, N for no) : ")
+    inp1 = input("Enter Plant 1's name : ")
+    inp2 = input("Enter Plant 2's name : ")
 
-# inp1 = input("Enter Plant 1's name : ")
-# inp2 = input("Enter Plant 2's name : ")
+    p1 = garden.get_plant(inp1)
+    p2 = garden.get_plant(inp2)
+
+    empty_spaces = int(input("How many empty spaces are there? : "))
+    mutation_rate = float(input("Chance of mutation : "))
+
+    calculate_total_chance(wood_chips, p1, p2, empty_spaces, mutation_rate)
+
+def get_mutations(garden):
+    name = input("Which plant do you want to get? : ")
+    plant = garden.get_plant(name)
+    plant.print_mutations()
 
 garden = Garden()
-
-# Used to add mutation information to the plants.
 garden.include_mutations()
 
-# An example of printing a plant's details.
-# This includes all mutations that will create it.
-garden.get_plant("Baker's Wheat").print_details()
+print("Pick a choice!")
+print("\t1. Calculate mutation possibility")
+print("\t2. Find out how to get plant")
+choice = int(input("Choice : "))
 
-# p1 = garden.get_plant(inp1)
-# p2 = garden.get_plant(inp2)
-
-# empty_spaces = int(input("How many empty spaces are there? : "))
-# mutation_rate = float(input("Chance of mutation : "))
-
-# calculate_total_chance(wood_chips, p1, p2, empty_spaces, mutation_rate)
+if choice == 1:
+    basic_garden(garden)
+elif choice == 2:
+    get_mutations(garden)
