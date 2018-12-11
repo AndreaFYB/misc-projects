@@ -135,28 +135,6 @@ class Garden:
     def include_mutations(self):
         g = self.garden
 
-        # Plant string keys
-        # !key - denotes the quantity
-        #        a key can either be 
-        #           - num  : that number (or more) of plants
-        #           - <num : less than that number of plants
-        #        if this is omitted, a quantity of 1 is assumed.
-        #
-        # !!num - denotes EXACT quantity
-        #         The difference between this and !num
-        #         is that !num allows for more plants,
-        #         whereas !!num doesn't.
-        #
-        # @key  - denotes status of plant
-        #         a key can either be
-        #           - Any  : any plant (even not mature)
-        #         if this is omitted, a status of mature is assumed.
-        # Examples:
-        #   Plant!3 - 3 or more of Plant
-        #   Plant!<4 - Less than 4 of plant
-        #   Plant!!2 - Exactly 2 of Plant
-        #   Plant!4@Any - Any 4 of Plant
-
         mutations = [
                 ["Baker's Wheat", 
                     [["Baker's Wheat!2"], 0.2],
@@ -285,10 +263,10 @@ class Garden:
             ingredients = mutation[1:]
 
             for ing in ingredients:
-                g[mutated.lower()].created_from(Mutation(ing[0], ing[1]))
+                g[mutated.lower()].created_from(Mutation(self, ing[0], ing[1]))
 
 class Mutation:
-    def __init__(self, plants, mut_rate):
+    def __init__(self, garden, plants, mut_rate):
         self.mut_rate = mut_rate
         self.conditions = []
 
@@ -296,7 +274,7 @@ class Mutation:
             if "!" in x and "!!" not in x:
                 xsplit = x.split("!")
 
-                name = xsplit[0]
+                plant = garden.get_plant(xsplit[0])
                 quantity = xsplit[1]
                 status = None
                 lessT = None
@@ -309,18 +287,25 @@ class Mutation:
                 if "<" in quantity:
                     lessT = True
                 
-                self.conditions += [self.Condition(name, quantity, status, lessT)]
+                self.conditions += [self.Condition(plant, quantity, status, lessT)]
             
             elif "!!" in x:
                 xsplit = x.split("!!")
 
-                name = xsplit[0]
+                plant = garden.get_plant(xsplit[0])
                 quantity = xsplit[1]
 
-                self.conditions += [self.Condition(name, quantity, exactT = True)]
+                self.conditions += [self.Condition(plant, quantity, exactT = True)]
+
+            elif "@" in x:
+                xsplit = x.split("@")
+
+                plant = garden.get_plant(xsplit[0])
+
+                self.conditions += [self.Condition(plant, status = xsplit[1])]
 
             else:
-                self.conditions += [self.Condition(x)]
+                self.conditions += [self.Condition(garden.get_plant(x))]
 
     def __str__(self):
         string = ""
@@ -333,8 +318,8 @@ class Mutation:
         return string
 
     class Condition:
-        def __init__(self, name, quantity = 1, status = "M", lessT = False, exactT = False):
-            self.name = name
+        def __init__(self, plant, quantity = 1, status = "M", lessT = False, exactT = False):
+            self.plant = plant
             self.quantity = quantity
             self.status = status
             self.exactF = False
@@ -349,11 +334,11 @@ class Mutation:
                 status_str = "Any "
 
             if self.exactF is False and self.lessT is False:
-                return "%s or more of %s%s" % (self.quantity, status_str, self.name)
+                return "%s or more of %s%s" % (self.quantity, status_str, self.plant.name)
             elif self.exactF is True:
-                return "Exactly %s of %s%s" % (self.quantity, status_str, self.name)
+                return "Exactly %s of %s%s" % (self.quantity, status_str, self.plant.name)
             elif self.lessT is True:
-                return "Less than %s of %s%s" % (self.quantity, status_str, self.name)
+                return "Less than %s of %s%s" % (self.quantity, status_str, self.plant.name)
 
         
 
