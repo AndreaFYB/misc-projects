@@ -5,15 +5,15 @@ This project aims to serve as a sort of helper for the garden involved in cookie
 When you run `mutation.py`, the first input you'll be asked is about your garden size. Specifically your level or dimension. You can enter either. For example if your garden is at level 4 (and hence has dimensions 4x3), you can either enter `4`, or `4x3`. Whichever you feel is simpler.
 
 After that, you are directed to a menu. In this menu you can:
-    - Calculate your chances at a mutation
-    - Find how to achieve a certain mutation
-    - Get the best layout for your garden.
+- Calculate your chances at a mutation
+- Find how to achieve a certain mutation
+- Get the best layout for your garden.
 
 ### Calculating your chances
 For this you need to know (and input) these things:
-    - Whether you're using wood chips.
-    - The 2 plants you want to use.
-    - Which mutation you want.
+- Whether you're using wood chips.
+- The 2 plants you want to use.
+- Which mutation you want.
 
 The first thing you'll be asked is whether you are going to use wood chips. After that, you'll be prompted for the two plants you want to use. If you need to use 2 of the same plant, then you can type the same name twice.
 
@@ -31,22 +31,22 @@ For this, just enter whether you're looking for the best layout with different p
 
 ## Docs
 There are multiple classes here, namely:
-    - `Plant`
-    - `Grid`
-    - `Garden`
-    - `Mutation`
-        - `Condition`
+- `Plant`
+- `Grid`
+- `Garden`
+- `Mutation`
+    - `Condition`
 
 ### Grid
 This class is very simple, and mostly used as a utility class. It serves as an interface for creating a 2D array (hence a grid). Has specific `set` and `get` functions, and a representation via `__repr__`, and may get additional functions in the future.
 
 ### Plant
 A plant needs:
-    - A name
-    - Number of ticks till maturity
-    - Number of ticks during its lifespan
-    - Cost to plant relative to cps (in minutes)
-    - Minimum cost of plant
+- A name
+- Number of ticks till maturity
+- Number of ticks during its lifespan
+- Cost to plant relative to cps (in minutes)
+- Minimum cost of plant
 
 It has multiple `compare` functions that compare 2 plants'
 maturities, lifespans, or duration of maturity.
@@ -54,8 +54,8 @@ maturities, lifespans, or duration of maturity.
 The function `created_from` accepts a **`Mutation`** object, and will add said mutation to `muts`. Any **`Mutation`** in `muts` is one that will result in the plant it belongs to.
 
 There are two printing functions:
-    - `print_details` : Prints all the details of a plant.
-    - `print_mutations` : Prints all mutations that can create the plant.
+- `print_details` : Prints all the details of a plant.
+- `print_mutations` : Prints all mutations that can create the plant.
 
 `get_cost` simply retrieves the cost to plant the plant, and takes the `cps` as the parameter.
 
@@ -67,9 +67,9 @@ There are two printing functions:
 
 ### Mutation
 A mutation needs:
-    - A `Garden` object
-    - A list of plant names in Mutation Notation.
-    - The mutation rate.
+- A `Garden` object
+- A list of plant names in Mutation Notation.
+- The mutation rate.
 
 The garden object is useful as it is used to retrieve `Plant` objects using the list of plant names that was passed.
 
@@ -84,39 +84,39 @@ An example of a plant name in Mutation Notation is as follows:
 The above means "*Any 2 Brown Mold plants*"
 
 An explanation of the notation:
-    - In every name, there must be the actual plant name, which will come first.
-    - If there is a quantity constraint, it must be shown via a symbol after the name:
-        - `!n` : n or more of this plant.
-        - `!!n` : exactly n of this plant.
-        - `!<n` : less than n of this plant.
-        - Without an explicitly mentioned quantity constraint, it will be assumed to be *1 or more*.
-    - There can be a status constraint, which shows whether the plant needs to be Mature, or more.
-        - `@M` : Mature
-        - `@Any` : Any (Mature and below)
-        - Without an explicitly mentioned status constraint, it will be assumed to be *Mature*
-    - Status constraints come **after** quantity constraints.
+- In every name, there must be the actual plant name, which will come first.
+- If there is a quantity constraint, it must be shown via a symbol after the name:
+    - `!n` : n or more of this plant.
+    - `!!n` : exactly n of this plant.
+    - `!<n` : less than n of this plant.
+    - Without an explicitly mentioned quantity constraint, it will be assumed to be *1 or more*.
+- There can be a status constraint, which shows whether the plant needs to be Mature, or more.
+    - `@M` : Mature
+    - `@Any` : Any (Mature and below)
+    - Without an explicitly mentioned status constraint, it will be assumed to be *Mature*
+- Status constraints come **after** quantity constraints.
 
 More examples of the notation:
-    - Exactly 3 of Cronerice = `Cronerice!!3`
-    - 2 or more of Thumbcorn = `Thumbcorn!2`
-    - Less than 5 of any Brown Mold = `Brown Mold!<5@Any`
+- Exactly 3 of Cronerice = `Cronerice!!3`
+- 2 or more of Thumbcorn = `Thumbcorn!2`
+- Less than 5 of any Brown Mold = `Brown Mold!<5@Any`
 
 Every plant name in Mutation Notation will be converted into a `Condition` object. A `Mutation` object will contain a list of these conditions, and the mutation rate.
 
 ### Condition
 A `Condition` is only used within a `Mutation` object, in order to store the prerequisites for the Mutation. Every condition specifies certain amount of parameters:
-    - `plant` : The plant required.
-    - `quantity` : The quantity required. By default, this means that `quantity` or more of `plant` are required, though this meaning can change according to other flags.
-    - `status` : `"M"` or `"Any"`. Specifies the status of the plant.
-    - `lessT` : A flag. If `True`, then there need to be less than `quantity` of `plant`.
-    - `exactT` : A flag. If `True`, then there need to be exactly `quantity` of `plant`.
-    - `to`  : A sort-of flag. If set to a value higher than `quantity` then a range of quantities is specified for the plant.
+- `plant` : The plant required.
+- `quantity` : The quantity required. By default, this means that `quantity` or more of `plant` are required, though this meaning can change according to other flags.
+- `status` : `"M"` or `"Any"`. Specifies the status of the plant.
+- `lessT` : A flag. If `True`, then there need to be less than `quantity` of `plant`.
+- `exactT` : A flag. If `True`, then there need to be exactly `quantity` of `plant`.
+- `to`  : A sort-of flag. If set to a value higher than `quantity` then a range of quantities is specified for the plant.
 
 Some examples to explain it better.
-    - `Condition(plant=P, quantity=4, lessT=True)` : Less than 4 of the Mature plant `P` are required.
-    - `Condition(plant=P, quantity=2, to=4)` : 2 to 4 of the Mature plant `P` are required.
-    - `Condition(plant=P, quantity=3, exact=True)` : Exactly 3 of plant `P` are required.
-    - `Condition(plant=P, quantity=2, status="Any")` : 2 or more of Any plant `P` are required.
+- `Condition(plant=P, quantity=4, lessT=True)` : Less than 4 of the Mature plant `P` are required.
+- `Condition(plant=P, quantity=2, to=4)` : 2 to 4 of the Mature plant `P` are required.
+- `Condition(plant=P, quantity=3, exact=True)` : Exactly 3 of plant `P` are required.
+- `Condition(plant=P, quantity=2, status="Any")` : 2 or more of Any plant `P` are required.
 
 ### Garden
 The largest object, for good reason. 
