@@ -39,12 +39,14 @@ def calculate_total_chance(wc, p1, p2, empty, mut):
     print("---------------------------------------------------------------------")
 
 class Plant:
-    def __init__(self, name, mat, life):
+    def __init__(self, name, mat, life, cps_cost, min_cost):
         self.name = name
         self.mat = mat
-        self.muts = []
         self.life = life
+        self.cps_cost = cps_cost
+        self.min_cost = min_cost
         self.mat_age = life-mat
+        self.muts = []
 
     def __eq__(self, plant):
         return (self.compare_maturity(plant) == 0 and self.compare_lifespan(plant) == 0 and self.compare_maturation_age(plant) == 0)
@@ -88,9 +90,59 @@ class Plant:
 
         print("{:-^40}".format(""))
 
+    def get_cost(self, cps):
+        total_cost = cps * self.cps_cost
+        return self.min_cost if total_cost < self.min_cost else total_cost
+
+    def mutates_from(self, ingredients):
+        for mut in self.muts:
+            if mut.match_ingredients(ingredients) is True:
+                return mut
+        return False
+
+class Grid:
+    def __init__(self, x, y, elem=None):
+        self.dimensions = (x,y)
+        self.area = x*y
+
+        self.grid = [[elem for x1 in range(x)] for y1 in range(y)]
+
+    def set(self, x, y, elem):
+        self.grid[y][x] = elem
+
+    def get(self, x, y, elem):
+        return self.grid[y][x]
+
+    def __repr__(self):
+        string = ""
+
+        for horizarr in self.grid:
+            string += "[" + " , ".join(horizarr) + "]\n"
+
+        return string
+
 class Garden:
-    def __init__(self):
+    def __init__(self, level=None, dimensions=None):
         self.garden = {}
+
+        level_grid_dict = {
+            1 : (2,2),
+            2 : (3,2),
+            3 : (3,3),
+            4 : (4,3),
+            5 : (4,4),
+            6 : (5,4),
+            7 : (5,5),
+            8 : (6,5),
+            9 : (6,6)
+        }
+
+        if level is not None and dimensions is None:
+            dimensions = level_grid_dict[level]
+        elif (level is None and dimensions is None) or (level is not None and dimensions is not None):
+            raise RuntimeError("Level OR dimensions required! Not both, not neither!")
+        
+        self.plots = Grid(dimensions[0], dimensions[1], "-")
 
         plants = [
             ["Baker's Wheat", 5, 13, 1, 30],
@@ -115,8 +167,8 @@ class Garden:
             ["Juicy Queenbeet", 1063, 1250, -1, -1],
             ["Duketater", 212, 223, 480, 1 * 10**12],
             ["Shriekbulb", 18, 29, 60, 4.444 * 10**12],
-            ["Tidygrass", 80, 200, 100 * 10**12],
-            ["Everdaisy", 250, 9999, 100 * 10**18],
+            ["Tidygrass", 80, 200, 90, 100 * 10**12],
+            ["Everdaisy", 250, 9999, 180, 100 * 10**18],
             ["White Mildew", 5, 8, 20, 9999],
             ["Brown Mold", 5, 8, 20, 9999],
             ["Crumbspore", 15, 23, 10, 999],
@@ -130,7 +182,7 @@ class Garden:
         ]
 
         for x in plants:
-            self.garden[x[0].lower()] = Plant(x[0], x[1], x[2])
+            self.garden[x[0].lower()] = Plant(x[0], x[1], x[2], x[3], x[4])
 
     def get_plant(self, name):
         return self.garden[name.lower()]
@@ -268,6 +320,37 @@ class Garden:
             for ing in ingredients:
                 g[mutated.lower()].created_from(Mutation(self, ing[0], ing[1]))
 
+    def best_layout(self, dual=False):
+        best_by_dimensions = {
+            (2,2) : [(0,0), (1,1)],
+            (3,2) : [(1,0), (1,1)],
+            (3,3) : [(0,1), (1,1), (2,1)],
+            (4,3) : [(0,1), (1,1), (2,1), (3,1)],
+            (4,4) : [(0,0), (3,3), (0,3), (3,0), (1,2), (2,1)],
+            (5,4) : [(0,0), (2,0), (4,0), (0,2), (1,2), (3,2), (4,2)],
+            (5,5) : [(0,0), (1,0), (3,0), (4,0), (0,3), (1,3), (3,3), (4,3)],
+            (6,5) : [(1,0), (1,1), (1,3), (1,4), (4,0), (4,1), (4,3), (4,4)],
+            (6,6) : [(0,1), (1,1), (3,1), (4,1), (5,1), (0,4), (1,4), (2,4), (4,4), (5,4)]
+        }
+
+        dims = self.plots.dimensions
+        points = best_by_dimensions[dims]
+
+        plots = Grid(dims[0], dims[1], "-")
+
+        for (x,y) in points:
+            plots.set(x,y, "P")
+
+        return {"plot" : plots, "empty" : self.plots.area - len(best_by_dimensions[dims])}
+
+    def get_mutations_by_ingredients(self, ingredients):
+        mutations = []
+        for _,v in self.garden.items():
+            mut = v.mutates_from(ingredients)
+            if mut is not False:
+                mutations += [(v,mut)]
+    
+        return mutations
 class Mutation:
     def __init__(self, garden, plants, mut_rate):
         self.mut_rate = mut_rate
@@ -289,6 +372,12 @@ class Mutation:
 
                 if "<" in quantity:
                     lessT = True
+                    quantity = quantity.split("<")[1]
+
+                if "-" in quantity:
+                    rangeQ = quantity.split("-")
+                    self.conditions += [self.Condition(plant, rangeQ[0], status, lessT, to=rangeQ[1])]
+                    continue
                 
                 self.conditions += [self.Condition(plant, quantity, status, lessT)]
             
@@ -298,7 +387,7 @@ class Mutation:
                 plant = garden.get_plant(xsplit[0])
                 quantity = xsplit[1]
 
-                self.conditions += [self.Condition(plant, quantity, exactT = True)]
+                self.conditions += [self.Condition(plant, quantity, exact = True)]
 
             elif "@" in x:
                 xsplit = x.split("@")
@@ -320,13 +409,33 @@ class Mutation:
 
         return string
 
+    def match_ingredients(self, ingredients):
+        ingnames = [p.name for p in ingredients]
+        plant_types = list(set(ingnames))
+        count = {}
+
+        for ptype in plant_types:
+            count[ptype] = ingnames.count(ptype)
+
+        for con in self.conditions:
+            if con.plant.name not in count: return False
+            if con.lessT:
+                if count[con.plant.name] >= con.quantity: return False
+            elif con.exact:
+                if count[con.plant.name] != con.quantity: return False
+            else:
+                if count[con.plant.name] < con.quantity: return False
+
+        return True
+
     class Condition:
-        def __init__(self, plant, quantity = 1, status = "M", lessT = False, exactT = False):
+        def __init__(self, plant, quantity = 1, status = "M", lessT = False, exact = False, to = -1):
             self.plant = plant
-            self.quantity = quantity
+            self.quantity = int(quantity)
             self.status = status
-            self.exactF = False
-            self.lessT = False
+            self.exact = exact
+            self.lessT = lessT
+            self.to = to
 
         def __repr__(self):
             status_str = ""
@@ -336,9 +445,9 @@ class Mutation:
             elif self.status == "Any":
                 status_str = "Any "
 
-            if self.exactF is False and self.lessT is False:
+            if self.exact is False and self.lessT is False:
                 return "%s or more of %s%s" % (self.quantity, status_str, self.plant.name)
-            elif self.exactF is True:
+            elif self.exact is True:
                 return "Exactly %s of %s%s" % (self.quantity, status_str, self.plant.name)
             elif self.lessT is True:
                 return "Less than %s of %s%s" % (self.quantity, status_str, self.plant.name)
@@ -352,8 +461,21 @@ def basic_garden(garden):
     p1 = garden.get_plant(inp1)
     p2 = garden.get_plant(inp2)
 
-    empty_spaces = int(input("How many empty spaces are there? : "))
-    mutation_rate = float(input("Chance of mutation : "))
+    mutps = garden.get_mutations_by_ingredients([p1,p2])
+
+    print("Possible mutations:\n\t- {}".format("\t- ".join(p[0].name + "\n" for p in mutps)))
+
+    chosen_mut = None
+
+    if len(mutps) == 0:
+        print("ERROR - No mutations found.")
+    elif len(mutps) == 1:
+        chosen_mut = mutps[0]
+    else:
+        chosen_mut = mutps[int(input("Enter the index (1-{}) of the mutation you'd like : ".format(len(mutps))))-1]
+
+    empty_spaces = garden.best_layout()["empty"]
+    mutation_rate = chosen_mut[1].mut_rate
 
     calculate_total_chance(wood_chips, p1, p2, empty_spaces, mutation_rate)
 
@@ -362,16 +484,31 @@ def get_mutations(garden):
     plant = garden.get_plant(name)
     plant.print_mutations()
 
+def get_best_layout(garden):
+    dual = input("Different plants (Y) or same plant (N)? : ")
+    garden.best_layout(True if dual == "Y" else False)
+
 if __name__ == "__main__":
-    garden = Garden()
+    garden = None
+
+    g_size = input("Enter the level (1..9+) or dimensions (2x2...) of your garden : ")
+    if "x" in g_size:
+        spl = g_size.split("x")
+        garden = Garden(dimensions=(int(spl[0]), int(spl[1])))
+    else:
+        garden = Garden(level=int(g_size))
+
     garden.include_mutations()
 
     print("Pick a choice!")
     print("\t1. Calculate mutation possibility")
     print("\t2. Find out how to get plant")
+    print("\t3. Get best layout")
     choice = int(input("Choice : "))
 
     if choice == 1:
         basic_garden(garden)
     elif choice == 2:
         get_mutations(garden)
+    elif choice == 3:
+        get_best_layout(garden)
