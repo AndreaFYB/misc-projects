@@ -1,5 +1,5 @@
 class Plant:
-    def __init__(self, name, mat, life, cps_cost, min_cost):
+    def __init__(self, name, mat, life, cps_cost, min_cost, code="PNT"):
         self.name = name
         self.mat = mat
         self.life = life
@@ -7,6 +7,7 @@ class Plant:
         self.min_cost = min_cost
         self.mat_age = life-mat
         self.muts = []
+        self.code = code
 
     def __eq__(self, plant):
         return (self.compare_maturity(plant) == 0 and self.compare_lifespan(plant) == 0 and self.compare_maturation_age(plant) == 0)
@@ -105,44 +106,44 @@ class Garden:
         self.plots = Grid(dimensions[0], dimensions[1], "-")
 
         plants = [
-            ["Baker's Wheat", 5, 13, 1, 30],
-            ["Thumbcorn", 3, 15, 5, 100],
-            ["Cronerice", 74, 134, 15, 250],
-            ["Gildmillet", 15, 37, 15, 1500],
-            ["Clover", 20, 58, 25, 77777],
-            ["Golden Clover", 5, 10, 125, 777777777],
-            ["Shimmerlily", 9, 13, 60, 777777],
-            ["Elderwort", 164, 9999, 180, 100 * 10**6],
-            ["Bakeberry", 34, 67, 45, 100 * 10**6],
-            ["Chocoroot", 7, 25, 15, 100 * 10**3],
-            ["White Chocoroot", 7, 25, 15, 100 * 10**3],
-            ["Meddleweed", 4, 8, 1, 10],
-            ["Whiskerbloom", 20, 34, 20, 1 * 10**6],
-            ["Chimerose", 18, 58, 15, 242424],
-            ["Nursetulip", 40, 64, 40, 1 * 10**9],
-            ["Drowsyfern", 300, 1000, 90, 100 * 10**3],
-            ["Wardlichen", 10, 15, 10, 10000],
-            ["Keenmoss", 10, 16, 50, 1 * 10**6],
-            ["Queenbeet", 67, 84, 90, 1 * 10**9],
-            ["Juicy Queenbeet", 1063, 1250, -1, -1],
-            ["Duketater", 212, 223, 480, 1 * 10**12],
-            ["Shriekbulb", 18, 29, 60, 4.444 * 10**12],
-            ["Tidygrass", 80, 200, 90, 100 * 10**12],
-            ["Everdaisy", 250, 9999, 180, 100 * 10**18],
-            ["White Mildew", 5, 8, 20, 9999],
-            ["Brown Mold", 5, 8, 20, 9999],
-            ["Crumbspore", 15, 23, 10, 999],
-            ["Doughshroom", 43, 50, 100, 100 * 10**6],
-            ["Glovemorel", 7, 9, 30, 10000],
-            ["Cheapcap", 3, 8, 40, 100000],
-            ["Fool Bolete", 3, 6, 15, 10000],
-            ["Wrinklegill", 26, 40, 20, 1 * 10**6],
-            ["Green Rot", 4, 6, 60, 1 * 10**6],
-            ["Ichorpuff", 20, 58, 120, 987654321]
+            ["Baker's Wheat", 5, 13, 1, 30, "Bak"],
+            ["Thumbcorn", 3, 15, 5, 100, "Thu"],
+            ["Cronerice", 74, 134, 15, 250, "Cro"],
+            ["Gildmillet", 15, 37, 15, 1500, "Gil"],
+            ["Clover", 20, 58, 25, 77777, "Clo"],
+            ["Golden Clover", 5, 10, 125, 777777777, "GCl"],
+            ["Shimmerlily", 9, 13, 60, 777777, "Shi"],
+            ["Elderwort", 164, 9999, 180, 100 * 10**6, "Eld"],
+            ["Bakeberry", 34, 67, 45, 100 * 10**6, "Bkb"],
+            ["Chocoroot", 7, 25, 15, 100 * 10**3, "Cho"],
+            ["White Chocoroot", 7, 25, 15, 100 * 10**3, "WCh"],
+            ["Meddleweed", 4, 8, 1, 10, "Med"],
+            ["Whiskerbloom", 20, 34, 20, 1 * 10**6, "Whi"],
+            ["Chimerose", 18, 58, 15, 242424, "Chi"],
+            ["Nursetulip", 40, 64, 40, 1 * 10**9, "Nur"],
+            ["Drowsyfern", 300, 1000, 90, 100 * 10**3, "Dro"],
+            ["Wardlichen", 10, 15, 10, 10000, "War"],
+            ["Keenmoss", 10, 16, 50, 1 * 10**6, "Kee"],
+            ["Queenbeet", 67, 84, 90, 1 * 10**9, "Qbt"],
+            ["Juicy Queenbeet", 1063, 1250, -1, -1, "JQB"],
+            ["Duketater", 212, 223, 480, 1 * 10**12, "Duk"],
+            ["Shriekbulb", 18, 29, 60, 4.444 * 10**12, "Shr"],
+            ["Tidygrass", 80, 200, 90, 100 * 10**12, "Tid"],
+            ["Everdaisy", 250, 9999, 180, 100 * 10**18, "Eve"],
+            ["White Mildew", 5, 8, 20, 9999, "WhM"],
+            ["Brown Mold", 5, 8, 20, 9999, "BrM"],
+            ["Crumbspore", 15, 23, 10, 999, "Cru"],
+            ["Doughshroom", 43, 50, 100, 100 * 10**6, "Dou"],
+            ["Glovemorel", 7, 9, 30, 10000, "Glo"],
+            ["Cheapcap", 3, 8, 40, 100000, "Che"],
+            ["Fool Bolete", 3, 6, 15, 10000, "Foo"],
+            ["Wrinklegill", 26, 40, 20, 1 * 10**6, "Wri"],
+            ["Green Rot", 4, 6, 60, 1 * 10**6, "Gre"],
+            ["Ichorpuff", 20, 58, 120, 987654321, "Ich"]
         ]
 
         for x in plants:
-            self.garden[x[0].lower()] = Plant(x[0], x[1], x[2], x[3], x[4])
+            self.garden[x[0].lower()] = Plant(x[0], x[1], x[2], x[3], x[4], x[5])
 
     def get_plant(self, name):
         return self.garden[name.lower()]
@@ -280,28 +281,52 @@ class Garden:
             for ing in ingredients:
                 g[mutated.lower()].created_from(Mutation(self, ing[0], ing[1]))
 
-    def best_layout(self, dual=False):
+    def best_layout(self, p1, p2, cps):
         best_by_dimensions = {
-            (2,2) : [(0,0), (1,1)],
-            (3,2) : [(1,0), (1,1)],
-            (3,3) : [(0,1), (1,1), (2,1)],
-            (4,3) : [(0,1), (1,1), (2,1), (3,1)],
-            (4,4) : [(0,0), (3,3), (0,3), (3,0), (1,2), (2,1)],
-            (5,4) : [(0,0), (2,0), (4,0), (0,2), (1,2), (3,2), (4,2)],
-            (5,5) : [(0,0), (1,0), (3,0), (4,0), (0,3), (1,3), (3,3), (4,3)],
-            (6,5) : [(1,0), (1,1), (1,3), (1,4), (4,0), (4,1), (4,3), (4,4)],
-            (6,6) : [(0,1), (1,1), (3,1), (4,1), (5,1), (0,4), (1,4), (2,4), (4,4), (5,4)]
+            (2,2) : [(0,0,'a'), (1,1,'b')],
+            (3,2) : [(1,0,'a'), (1,1,'b')],
+            (3,3) : [(0,1,'a'), (1,1,'b'), (2,1,'a')],
+            (4,3) : [(0,1,'a'), (1,1,'b'), (2,1,'a'), (3,1,'b')],
+            (4,4) : [(0,0,'a'), (3,3,'a'), (0,3,'a'), (3,0,'a'), (1,2,'b'), (2,1,'b')],
+            (5,4) : [(0,0,'a'), (2,0,'b'), (4,0,'a'), (0,2,'a'), (1,2,'b'), (3,2,'a'), (4,2,'b')],
+            (5,5) : [(0,0,'a'), (1,0,'b'), (3,0,'a'), (4,0,'b'), (0,3,'a'), (1,3,'b'), (3,3,'a'), (4,3,'b')],
+            (6,5) : [(1,0,'a'), (1,1,'b'), (1,3,'a'), (1,4,'b'), (4,0,'a'), (4,1,'b'), (4,3,'a'), (4,4,'b')],
+            (6,6) : [(0,1,'a'), (1,1,'b'), (3,1,'a'), (4,1,'b'), (5,1,'a'), (0,4,'a'), (1,4,'b'), (2,4,'a'), (4,4,'b'), (5,4,'a')]
         }
+
+        # p1 - even index, p2 - odd index
 
         dims = self.plots.dimensions
         points = best_by_dimensions[dims]
 
-        plots = Grid(dims[0], dims[1], "-")
+        plots = Grid(dims[0], dims[1], "---")
 
-        for (x,y) in points:
-            plots.set(x,y, "P")
+        cost = 0
 
-        return {"plot" : plots, "empty" : self.plots.area - len(best_by_dimensions[dims])}
+        p1cost = p1.get_cost(cps)
+        p2cost = p2.get_cost(cps)
+
+        if(p1 == p2):
+            for (x,y,_) in points:
+                cost += p1cost
+                plots.set(x,y, " P ")
+        else:
+            pcs = (p1.code, p2.code) if p1cost < p2cost else (p2.code, p1.code)
+            for (x,y,z) in points:
+                pc = None
+                if z == "a":
+                    pc = pcs[0]
+                    cost += p1cost
+                else:
+                    pc = pcs[1]
+                    cost += p2cost
+                plots.set(x,y, pc)
+
+        return {
+            "plot" : plots,
+            "empty" : self.plots.area - len(best_by_dimensions[dims]),
+            "cost" : num_to_word(cost)
+        }
 
     def get_mutations_by_ingredients(self, ingredients):
         mutations = []
@@ -396,7 +421,7 @@ class Mutation:
             self.status = status
             self.exact = exact
             self.lessT = lessT
-            self.to = -1 if to <= quantity else to
+            self.to = -1 if int(to) <= int(quantity) else int(to)
 
         def __repr__(self):
             status_str = ""
@@ -413,7 +438,42 @@ class Mutation:
             elif self.lessT is True:
                 return "Less than %s of %s%s" % (self.quantity, status_str, self.plant.name)
 
-def basic_garden(garden):
+def word_to_num(num, extension):
+    extensions = [
+        "million", "billion", "trillion", "quadrillion",
+        "quintillion", "sextillion", "septillion",
+        "octillion", "nonillion", "decillion",
+        "undecillion", "duodecillion", "tredecillion",
+        "quattordecillion", "quindecillion", "sexdecillion"
+    ]
+
+    ext_nums = [10 ** r for r in range(6, 52, 3)]
+
+    word_num = dict(zip(extensions, ext_nums))
+
+    return num * float(word_num[extension])
+
+def num_to_word(num):
+    extensions = [
+        "million", "billion", "trillion", "quadrillion",
+        "quintillion", "sextillion", "septillion",
+        "octillion", "nonillion", "decillion",
+        "undecillion", "duodecillion", "tredecillion",
+        "quattordecillion", "quindecillion", "sexdecillion"
+    ]
+
+    t_num = num / (10 ** 6)
+    i = 0
+
+    if t_num < 1: return num
+    
+    while(t_num / 1000 >= 1 and i <= 15):
+        t_num /= 1000
+        i += 1
+
+    return "{:.3f} {}".format(t_num, extensions[i])      
+
+def basic_garden(garden, cps):
     wood_chips = input("Are you using wood chip? (Y for yes, N for no) : ")
 
     inp1 = input("Enter Plant 1's name : ")
@@ -435,10 +495,15 @@ def basic_garden(garden):
     else:
         chosen_mut = mutps[int(input("Enter the index (1-{}) of the mutation you'd like : ".format(len(mutps))))-1]
 
-    empty_spaces = garden.best_layout()["empty"]
+    bl = garden.best_layout(p1,p2,cps)
+
+    empty_spaces = bl["empty"]
     mutation_rate = chosen_mut[1].mut_rate
 
     calculate_total_chance(wood_chips, p1, p2, empty_spaces, mutation_rate)
+    print("Best layout\n{}".format(bl["plot"]))
+    print("Total cost : {}".format(bl["cost"]))
+    
 
 def get_mutations(garden):
     name = input("Which plant do you want to get? : ")
@@ -487,12 +552,17 @@ def calculate_total_chance(wc, p1, p2, empty, mut):
     if(ins_chance != max_chance):
         print("In order to achieve maximum chance, plant %s %d ticks earlier." % (plant_earlier.name, diff_matu_ticks))
     print("---------------------------------------------------------------------")
-
+    
 
 if __name__ == "__main__":
     garden = None
 
     g_size = input("Enter the level (1..9+) or dimensions (2x2...) of your garden : ")
+
+    cps = input("Enter your CPS : ").split(" ")
+
+    cps = word_to_num(float(cps[0]), cps[1])
+
     if "x" in g_size:
         spl = g_size.split("x")
         garden = Garden(dimensions=(int(spl[0]), int(spl[1])))
@@ -508,7 +578,7 @@ if __name__ == "__main__":
     choice = int(input("Choice : "))
 
     if choice == 1:
-        basic_garden(garden)
+        basic_garden(garden, cps)
     elif choice == 2:
         get_mutations(garden)
     elif choice == 3:
