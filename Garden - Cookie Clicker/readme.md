@@ -155,4 +155,4 @@ mutation += [Name,
 - Add support for more complex mutations
 - Include plant descriptions
 - Add plant effects
-- Find which plant mutations are currently achievable
+- ~~Find which plant mutations are currently achievable~~

@@ -57,11 +57,25 @@ class Plant:
         total_cost = cps * self.cps_cost * 60
         return self.min_cost if total_cost < self.min_cost else total_cost
 
+    # Utilises all constraints and features of Conditions
+    # to find whether the exact list can mutate this plant
     def mutates_from(self, ingredients):
         for mut in self.muts:
             if mut.match_ingredients(ingredients) is True:
                 return mut
         return False
+
+    # Very general function to see whether this plant
+    # can be mutated given the following list of availiable plants
+    def achievable_by(self, plants):
+        missing = []
+        for mut in self.muts:
+            achieved = mut.achievable_by(plants)
+            if achieved is True:
+                return (mut, True)
+            else:
+                missing += [achieved]
+        return (missing, False)
 
 class Grid:
     def __init__(self, x, y, elem=None):
@@ -434,6 +448,12 @@ class Mutation:
 
         return True
 
+    def achievable_by(self, plants):
+        required_plants = [con.plant for con in self.conditions]
+        for plant in required_plants:
+            if plant not in plants : return plant.name
+        return True
+
     class Condition:
         def __init__(self, plant, quantity = 1, status = "M", lessT = False, exact = False, to = -1):
             self.plant = plant
@@ -648,10 +668,11 @@ if __name__ == "__main__":
     garden.include_mutations()
 
     plant_history = open("plants.grdn", "r+")
-    received = plant_history.read().split("\n")
-
-    remaining = [garden.get_plant(n) for n in 
-        list(set([p.name for _,p in garden.garden.items()]) - set(received))]
+    received = [garden.get_plant(n) for n in plant_history.read().split("\n")[:-1]]
+    remaining = [garden.get_plant(n) for n in
+        list(set([p.name for _,p in garden.garden.items()]) -
+            set([p.name for p in received]))
+    ]
 
     while(True):
         print("{:-^70}".format(" INFO "))
@@ -681,6 +702,9 @@ if __name__ == "__main__":
         elif choice == 4:
             for p in remaining:
                 print("[{:^18}]".format(p.name))
+                achievable = p.achievable_by(received)
+                ach_string = "YES" if achievable[1] else "REQUIRED => " + ", ".join(achievable[0])
+                print("\tAchievable? : {}".format(ach_string))
             time.sleep(3)
         elif choice == 5:
             plant_achieved = input("Enter name of plant : ")
