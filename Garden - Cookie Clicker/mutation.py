@@ -1,3 +1,5 @@
+import time
+
 class Plant:
     def __init__(self, name, mat, life, cps_cost, min_cost, code="PNT"):
         self.name = name
@@ -498,9 +500,8 @@ def basic_garden(garden, cps):
     bl = garden.best_layout(p1,p2,cps)
 
     empty_spaces = bl["empty"]
-    mutation_rate = chosen_mut[1].mut_rate
 
-    calculate_total_chance(wood_chips, p1, p2, empty_spaces, mutation_rate)
+    calculate_total_chance(wood_chips, p1, p2, empty_spaces, chosen_mut[1].mut_rate, chosen_mut[0].name)
     print("Best layout\n{}".format(bl["plot"]))
     print("Total cost : {}".format(bl["cost"]))
     
@@ -514,13 +515,14 @@ def get_best_layout(garden):
     dual = input("Different plants (Y) or same plant (N)? : ")
     print(garden.best_layout(True if dual == "Y" else False)[0])
 
-def calculate_total_chance(wc, p1, p2, empty, mut):
+def calculate_total_chance(wc, p1, p2, empty, mut_rate, mut_name):
     modifier = 3 if wc.lower() == "y" else 1
 
     max_ticks = 0
     instant = 0
     diff_matu_ticks = 0
     plant_earlier = None
+    plant_later = None
 
     if p1 == p2 :
         max_ticks = p1.mat_age
@@ -536,26 +538,47 @@ def calculate_total_chance(wc, p1, p2, empty, mut):
             if quick_grower == "P1":
                 instant = p1.mat_age - (p2.mat - p1.mat)
                 plant_earlier = p2
+                plant_later = p1
             else:
                 instant = p2.mat_age - (p1.mat - p2.mat)
                 plant_earlier = p1
+                plant_later = p2
         else:
             instant = max_ticks
 
-    max_chance = modifier * mut * empty * max_ticks
-    ins_chance = modifier * mut * empty * instant if instant > 0 else 0
+    max_chance = modifier * mut_rate * empty * max_ticks
+    ins_chance = modifier * mut_rate * empty * instant if instant > 0 else 0
 
-    print("\n---------------------------------------------------------------------")
+    print("{:-^69}".format(" Mutating {} ".format(mut_name)))
     print("Maximum chance = %.3f" % (max_chance))
     print("Maximum chance (if planted instantly) = %.3f" % (ins_chance))
     print("\nChance lost by being planted instantly = %.3f" % (max_chance - ins_chance))
     if(ins_chance != max_chance):
         print("In order to achieve maximum chance, plant %s %d ticks earlier." % (plant_earlier.name, diff_matu_ticks))
-    print("---------------------------------------------------------------------")
+
+        print("In other words, plant %s at:" % (plant_later.name))
+        print("\t{:15s} : {}".format("(Fertiliser)", get_time(3 * diff_matu_ticks * 60)))
+        print("\t{:15s} : {}".format("(Clay)", get_time(15 * diff_matu_ticks * 60)))
+        print("\t{:15s} : {}".format("(Other)", get_time(5 * diff_matu_ticks * 60)))
+    print("{:-^69}".format(""))
     
+def print_time(prompt, offset=0):
+    print("{} {}".format(prompt, get_time(offset)))
+
+def get_time(offset=0):
+    ctime = time.localtime(time.time() + offset)
+
+    return "{:02d}:{:02d}:{:02d} - {:02d}/{:02d} - {}".format(
+        ctime.tm_hour, ctime.tm_min, ctime.tm_sec,
+        ctime.tm_mday, ctime.tm_mon, ctime.tm_year)
+
 
 if __name__ == "__main__":
+    print("\n"*100)
+
     garden = None
+
+    print_time("Current time")
 
     g_size = input("Enter the level (1..9+) or dimensions (2x2...) of your garden : ")
 
