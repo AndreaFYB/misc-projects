@@ -516,21 +516,31 @@ def auto_garden(garden, cps):
     pl1 = garden.get_plant(pl_name)
     pl1.print_mutations()
 
-    mut_i = int(input("Select which mutation you'd like (1-{}) : ".format(len(pl1.muts))))
+    chosen_mut = None
+
+    if(len(pl1.muts) == 0):
+        print("ERROR : No possible options were found.")
+        print("Most likely a bug. Please contact the developer (me)")
+        return
+    elif(len(pl1.muts) == 1):
+        chosen_mut = pl1.muts[0]
+    else:
+        mut_i = int(input("Select which mutation you'd like (1-{}) : ".format(len(pl1.muts))))
+        chosen_mut = pl1.muts[mut_i-1]
 
     b___plants = []
-
-    chosen_mut = pl1.muts[mut_i-1]
 
     for con in chosen_mut.conditions:
         b___plants += [con.plant]*con.quantity
 
     p1, p2 = b___plants[0], b___plants[1]
 
-    layout = garden.best_layout(p1, p2, cps)
-    empty = layout["empty"]
+    bl = garden.best_layout(p1, p2, cps)
+    empty = bl["empty"]
 
-    calculate_total_chance(wood_chips, p1, p2, empty, chosen_mut.mut_rate, pl_name)
+    calculate_total_chance(wood_chips, p1, p2, empty, chosen_mut.mut_rate, pl_name.title())
+    print("Best layout\n{}".format(bl["plot"]))
+    print("Total cost : {}".format(bl["cost"]))
 
 def get_mutations(garden):
     name = input("Which plant do you want to get? : ")
@@ -629,9 +639,8 @@ if __name__ == "__main__":
         print("{:-^70}".format(" MENU "))
         print("Pick a choice!")
         print("\t    1. Calculate mutation possibility (by entering plants)")
-        print("\t    2. Calculate mutation possibility (by selecting mutation")
+        print("\t    2. Calculate mutation possibility (by selecting mutation)")
         print("\t    3. Find out how to get plant")
-        print("\t    4. Get best layout")
         print("\tOther. Quit")
         choice = int(input("Choice : "))
 
@@ -643,9 +652,6 @@ if __name__ == "__main__":
             time.sleep(3)
         elif choice == 3:
             get_mutations(garden)
-            time.sleep(3)
-        elif choice == 4:
-            get_best_layout(garden)
             time.sleep(3)
         else:
             break
