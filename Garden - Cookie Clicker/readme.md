@@ -153,6 +153,9 @@ mutation += [Name,
 # In the future
 - Update this README more thoroughly
 - Add support for more complex mutations
-- Include plant descriptions
-- Add plant effects
+    - Note: A *simple* mutation is one which requires two ingredients, either of the same plant, or different plants. The complication here is that there are two approaches to handling complex mutations, and their optimal layouts.
+        - **A** : The layouts are hardcoded for each complex mutation. Requires a lot of time and tedious work.
+        - **B** : An algorithm to find the best layout for any and all mutations is created and implemented. This may sound easy, as it would automate all the best layouts, but it would be difficult to engineer, and may also require a lot of time, albeit it being less tedious.
+- Include plant descriptions and effects
+    - This includes the flavour text that accompanies the plant, as well as the list of effects the plant in question has. Whether these effects will be used in-program, or simply be stored as a string is unsure.
 - ~~Find which plant mutations are currently achievable~~
