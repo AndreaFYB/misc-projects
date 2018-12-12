@@ -1,43 +1,3 @@
-
-def calculate_total_chance(wc, p1, p2, empty, mut):
-    modifier = 3 if wc.lower() == "y" else 1
-
-    max_ticks = 0
-    instant = 0
-    diff_matu_ticks = 0
-    plant_earlier = None
-
-    if p1 == p2 :
-        max_ticks = p1.mat_age
-        instant = max_ticks
-        diff_matu_ticks = 0
-    else:
-        diff_matu_ticks = abs(p1.mat - p2.mat)
-        quick_grower = "P1" if p1.compare_maturity(p2) < 0 else "P2"
-        early_death = "P1" if p1.compare_lifespan(p2) < 0 else "P2"
-        max_ticks = p1.mat_age if p1.compare_maturation_age(p2) <= 0 else p2.mat_age
-
-        if quick_grower == early_death:
-            if quick_grower == "P1":
-                instant = p1.mat_age - (p2.mat - p1.mat)
-                plant_earlier = p2
-            else:
-                instant = p2.mat_age - (p1.mat - p2.mat)
-                plant_earlier = p1
-        else:
-            instant = max_ticks
-
-    max_chance = modifier * mut * empty * max_ticks
-    ins_chance = modifier * mut * empty * instant if instant > 0 else 0
-
-    print("\n---------------------------------------------------------------------")
-    print("Maximum chance = %.3f" % (max_chance))
-    print("Maximum chance (if planted instantly) = %.3f" % (ins_chance))
-    print("\nChance lost by being planted instantly = %.3f" % (max_chance - ins_chance))
-    if(ins_chance != max_chance):
-        print("In order to achieve maximum chance, plant %s %d ticks earlier." % (plant_earlier.name, diff_matu_ticks))
-    print("---------------------------------------------------------------------")
-
 class Plant:
     def __init__(self, name, mat, life, cps_cost, min_cost):
         self.name = name
@@ -91,7 +51,7 @@ class Plant:
         print("{:-^40}".format(""))
 
     def get_cost(self, cps):
-        total_cost = cps * self.cps_cost
+        total_cost = cps * self.cps_cost * 60
         return self.min_cost if total_cost < self.min_cost else total_cost
 
     def mutates_from(self, ingredients):
@@ -351,6 +311,7 @@ class Garden:
                 mutations += [(v,mut)]
     
         return mutations
+
 class Mutation:
     def __init__(self, garden, plants, mut_rate):
         self.mut_rate = mut_rate
@@ -435,7 +396,7 @@ class Mutation:
             self.status = status
             self.exact = exact
             self.lessT = lessT
-            self.to = to
+            self.to = -1 if to <= quantity else to
 
         def __repr__(self):
             status_str = ""
@@ -486,7 +447,47 @@ def get_mutations(garden):
 
 def get_best_layout(garden):
     dual = input("Different plants (Y) or same plant (N)? : ")
-    garden.best_layout(True if dual == "Y" else False)
+    print(garden.best_layout(True if dual == "Y" else False)[0])
+
+def calculate_total_chance(wc, p1, p2, empty, mut):
+    modifier = 3 if wc.lower() == "y" else 1
+
+    max_ticks = 0
+    instant = 0
+    diff_matu_ticks = 0
+    plant_earlier = None
+
+    if p1 == p2 :
+        max_ticks = p1.mat_age
+        instant = max_ticks
+        diff_matu_ticks = 0
+    else:
+        diff_matu_ticks = abs(p1.mat - p2.mat)
+        quick_grower = "P1" if p1.compare_maturity(p2) < 0 else "P2"
+        early_death = "P1" if p1.compare_lifespan(p2) < 0 else "P2"
+        max_ticks = p1.mat_age if p1.compare_maturation_age(p2) <= 0 else p2.mat_age
+
+        if quick_grower == early_death:
+            if quick_grower == "P1":
+                instant = p1.mat_age - (p2.mat - p1.mat)
+                plant_earlier = p2
+            else:
+                instant = p2.mat_age - (p1.mat - p2.mat)
+                plant_earlier = p1
+        else:
+            instant = max_ticks
+
+    max_chance = modifier * mut * empty * max_ticks
+    ins_chance = modifier * mut * empty * instant if instant > 0 else 0
+
+    print("\n---------------------------------------------------------------------")
+    print("Maximum chance = %.3f" % (max_chance))
+    print("Maximum chance (if planted instantly) = %.3f" % (ins_chance))
+    print("\nChance lost by being planted instantly = %.3f" % (max_chance - ins_chance))
+    if(ins_chance != max_chance):
+        print("In order to achieve maximum chance, plant %s %d ticks earlier." % (plant_earlier.name, diff_matu_ticks))
+    print("---------------------------------------------------------------------")
+
 
 if __name__ == "__main__":
     garden = None
