@@ -149,3 +149,10 @@ mutation += [Name,
 `best_layout` returns a dictionary that stores a grid representing the garden and which layout should be used with the key `plot`, and the number of empty spots in the grid with the key `empty`.
 
 `get_mutations_by_ingredients` returns all the mutations that result from the list of `Plant`s `ingredients`. 
+
+# In the future
+- Update this README more thoroughly
+- Add support for more complex mutations
+- Include plant descriptions
+- Add plant effects
+- Find which plant mutations are currently achievable

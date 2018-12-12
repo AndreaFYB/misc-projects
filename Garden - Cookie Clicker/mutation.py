@@ -291,16 +291,29 @@ class Garden:
             (3,3) : [(0,1,'a'), (1,1,'b'), (2,1,'a')],
             (4,3) : [(0,1,'a'), (1,1,'b'), (2,1,'a'), (3,1,'b')],
             (4,4) : [(0,0,'a'), (3,3,'a'), (0,3,'a'), (3,0,'a'), (1,2,'b'), (2,1,'b')],
-            (5,4) : [(0,0,'a'), (2,0,'b'), (4,0,'a'), (0,2,'a'), (1,2,'b'), (3,2,'a'), (4,2,'b')],
+            (5,4) : [(0,0,'a'), (3,0,'a'), (0,3,'a'), (3,3,'a'), (1,0,'b'), (4,0,'b'), (1,3,'b'), (4,3,'b')],
             (5,5) : [(0,0,'a'), (1,0,'b'), (3,0,'a'), (4,0,'b'), (0,3,'a'), (1,3,'b'), (3,3,'a'), (4,3,'b')],
             (6,5) : [(1,0,'a'), (1,1,'b'), (1,3,'a'), (1,4,'b'), (4,0,'a'), (4,1,'b'), (4,3,'a'), (4,4,'b')],
             (6,6) : [(0,1,'a'), (1,1,'b'), (3,1,'a'), (4,1,'b'), (5,1,'a'), (0,4,'a'), (1,4,'b'), (2,4,'a'), (4,4,'b'), (5,4,'a')]
+        }
+
+        unwanted_mutations = {
+            (2,2) : [],
+            (3,2) : [],
+            (3,3) : [(1,0), (1,2)],
+            (4,3) : [(1,0), (2,0), (1,2), (2,2)],
+            (4,4) : [(1,2), (2,1)],
+            (5,4) : [],
+            (5,5) : [],
+            (6,5) : [],
+            (6,6) : [(4,0), (4,2), (1,3), (1,5)]
         }
 
         # p1 - even index, p2 - odd index
 
         dims = self.plots.dimensions
         points = best_by_dimensions[dims]
+        points_X = unwanted_mutations[dims]
 
         plots = Grid(dims[0], dims[1], "---")
 
@@ -324,10 +337,14 @@ class Garden:
                     pc = pcs[1]
                     cost += p2cost
                 plots.set(x,y, pc)
+            for (x,y) in points_X:
+                plots.set(x,y, "-X-")
 
         return {
             "plot" : plots,
-            "empty" : self.plots.area - len(best_by_dimensions[dims]),
+            "empty" : self.plots.area - len(points),
+            "usable" : self.plots.area - len(points) - len(points_X),
+            "unwanted" : len(points_X),
             "cost" : num_to_word(cost)
         }
 
@@ -502,10 +519,10 @@ def basic_garden(garden, cps):
 
     bl = garden.best_layout(p1,p2,cps)
 
-    empty_spaces = bl["empty"]
+    usable_spaces = bl["usable"]
 
-    calculate_total_chance(wood_chips, p1, p2, empty_spaces, chosen_mut[1].mut_rate, chosen_mut[0].name)
-    print("Best layout\n{}".format(bl["plot"]))
+    calculate_total_chance(wood_chips, p1, p2, usable_spaces, chosen_mut[1].mut_rate, chosen_mut[0].name)
+    print("Best layout (-X- means a possible unwanted mutation)\n{}".format(bl["plot"]))
     print("Total cost : {}".format(bl["cost"]))
 
 def auto_garden(garden, cps):
@@ -536,10 +553,10 @@ def auto_garden(garden, cps):
     p1, p2 = b___plants[0], b___plants[1]
 
     bl = garden.best_layout(p1, p2, cps)
-    empty = bl["empty"]
+    usable = bl["usable"]
 
-    calculate_total_chance(wood_chips, p1, p2, empty, chosen_mut.mut_rate, pl_name.title())
-    print("Best layout\n{}".format(bl["plot"]))
+    calculate_total_chance(wood_chips, p1, p2, usable, chosen_mut.mut_rate, pl_name.title())
+    print("Best layout (-X- means a possible unwanted mutation)\n{}".format(bl["plot"]))
     print("Total cost : {}".format(bl["cost"]))
 
 def get_mutations(garden):
@@ -630,6 +647,12 @@ if __name__ == "__main__":
 
     garden.include_mutations()
 
+    plant_history = open("plants.grdn", "r+")
+    received = plant_history.read().split("\n")
+
+    remaining = [garden.get_plant(n) for n in 
+        list(set([p.name for _,p in garden.garden.items()]) - set(received))]
+
     while(True):
         print("{:-^70}".format(" INFO "))
         print_time("Current time : ")
@@ -641,6 +664,8 @@ if __name__ == "__main__":
         print("\t    1. Calculate mutation possibility (by entering plants)")
         print("\t    2. Calculate mutation possibility (by selecting mutation)")
         print("\t    3. Find out how to get plant")
+        print("\t    4. Find out what plants remain")
+        print("\t    5. Add achieved plant!")
         print("\tOther. Quit")
         choice = int(input("Choice : "))
 
@@ -653,5 +678,16 @@ if __name__ == "__main__":
         elif choice == 3:
             get_mutations(garden)
             time.sleep(3)
+        elif choice == 4:
+            for p in remaining:
+                print("[{:^18}]".format(p.name))
+            time.sleep(3)
+        elif choice == 5:
+            plant_achieved = input("Enter name of plant : ")
+            p = garden.get_plant(plant_achieved)
+            plant_history.write(p.name + "\n")
+            print("Saved plant!")
+            time.sleep(2)
         else:
             break
+#END
