@@ -41,7 +41,7 @@ class Plant:
         self.print_mutations()
 
     def print_mutations(self):
-        print("{:-^40}".format(" Mutated from "))
+        print("{:-^70}".format(" Mutated from "))
 
         if self.muts is []:
             print("[No mutations registered]")
@@ -51,7 +51,7 @@ class Plant:
             if(x < len(self.muts)-1):
                 print()
 
-        print("{:-^40}".format(""))
+        print("{:-^70}".format(""))
 
     def get_cost(self, cps):
         total_cost = cps * self.cps_cost * 60
@@ -105,6 +105,7 @@ class Garden:
         elif (level is None and dimensions is None) or (level is not None and dimensions is not None):
             raise RuntimeError("Level OR dimensions required! Not both, not neither!")
         
+        self.level = (dimensions[0]-2)+(dimensions[1]-2)+1
         self.plots = Grid(dimensions[0], dimensions[1], "-")
 
         plants = [
@@ -350,8 +351,8 @@ class Mutation:
 
                 plant = garden.get_plant(xsplit[0])
                 quantity = xsplit[1]
-                status = None
-                lessT = None
+                status = False
+                lessT = False
 
                 if "@" in quantity:
                     flags = quantity.split("@")
@@ -433,12 +434,14 @@ class Mutation:
             elif self.status == "Any":
                 status_str = "Any "
 
-            if self.exact is False and self.lessT is False:
+            if self.exact is False and self.lessT is False and self.to == -1:
                 return "%s or more of %s%s" % (self.quantity, status_str, self.plant.name)
             elif self.exact is True:
                 return "Exactly %s of %s%s" % (self.quantity, status_str, self.plant.name)
             elif self.lessT is True:
                 return "Less than %s of %s%s" % (self.quantity, status_str, self.plant.name)
+            elif self.to > -1:
+                return "Between %s and %s of %s%s" % (self.quantity, self.to, status_str, self.plant.name)
 
 def word_to_num(num, extension):
     extensions = [
@@ -476,7 +479,7 @@ def num_to_word(num):
     return "{:.3f} {}".format(t_num, extensions[i])      
 
 def basic_garden(garden, cps):
-    wood_chips = input("Are you using wood chip? (Y for yes, N for no) : ")
+    wood_chips = input("Are you using wood chips? (Y for yes, N for no) : ")
 
     inp1 = input("Enter Plant 1's name : ")
     inp2 = input("Enter Plant 2's name : ")
@@ -504,7 +507,30 @@ def basic_garden(garden, cps):
     calculate_total_chance(wood_chips, p1, p2, empty_spaces, chosen_mut[1].mut_rate, chosen_mut[0].name)
     print("Best layout\n{}".format(bl["plot"]))
     print("Total cost : {}".format(bl["cost"]))
-    
+
+def auto_garden(garden, cps):
+    wood_chips = input("Are you using wood chips? (Y/N) : ")
+
+    pl_name = input("Enter the plant you want : ")
+
+    pl1 = garden.get_plant(pl_name)
+    pl1.print_mutations()
+
+    mut_i = int(input("Select which mutation you'd like (1-{}) : ".format(len(pl1.muts))))
+
+    b___plants = []
+
+    chosen_mut = pl1.muts[mut_i-1]
+
+    for con in chosen_mut.conditions:
+        b___plants += [con.plant]*con.quantity
+
+    p1, p2 = b___plants[0], b___plants[1]
+
+    layout = garden.best_layout(p1, p2, cps)
+    empty = layout["empty"]
+
+    calculate_total_chance(wood_chips, p1, p2, empty, chosen_mut.mut_rate, pl_name)
 
 def get_mutations(garden):
     name = input("Which plant do you want to get? : ")
@@ -549,7 +575,7 @@ def calculate_total_chance(wc, p1, p2, empty, mut_rate, mut_name):
     max_chance = modifier * mut_rate * empty * max_ticks
     ins_chance = modifier * mut_rate * empty * instant if instant > 0 else 0
 
-    print("{:-^69}".format(" Mutating {} ".format(mut_name)))
+    print("{:-^70}".format(" Mutating {} ".format(mut_name)))
     print("Maximum chance = %.3f" % (max_chance))
     print("Maximum chance (if planted instantly) = %.3f" % (ins_chance))
     print("\nChance lost by being planted instantly = %.3f" % (max_chance - ins_chance))
@@ -560,10 +586,10 @@ def calculate_total_chance(wc, p1, p2, empty, mut_rate, mut_name):
         print("\t{:15s} : {}".format("(Fertiliser)", get_time(3 * diff_matu_ticks * 60)))
         print("\t{:15s} : {}".format("(Clay)", get_time(15 * diff_matu_ticks * 60)))
         print("\t{:15s} : {}".format("(Other)", get_time(5 * diff_matu_ticks * 60)))
-    print("{:-^69}".format(""))
+    print("{:-^70}".format(""))
     
 def print_time(prompt, offset=0):
-    print("{} {}".format(prompt, get_time(offset)))
+    print("{}{}".format(prompt, get_time(offset)))
 
 def get_time(offset=0):
     ctime = time.localtime(time.time() + offset)
@@ -578,7 +604,7 @@ if __name__ == "__main__":
 
     garden = None
 
-    print_time("Current time")
+    print_time("Current time : ")
 
     g_size = input("Enter the level (1..9+) or dimensions (2x2...) of your garden : ")
 
@@ -594,15 +620,32 @@ if __name__ == "__main__":
 
     garden.include_mutations()
 
-    print("Pick a choice!")
-    print("\t1. Calculate mutation possibility")
-    print("\t2. Find out how to get plant")
-    print("\t3. Get best layout")
-    choice = int(input("Choice : "))
+    while(True):
+        print("{:-^70}".format(" INFO "))
+        print_time("Current time : ")
+        print("CPS : {}".format(num_to_word(cps)))
+        print("Garden Level : {}".format(garden.level))
+        print("Garden Dimensions : {}".format(garden.plots.dimensions))
+        print("{:-^70}".format(" MENU "))
+        print("Pick a choice!")
+        print("\t    1. Calculate mutation possibility (by entering plants)")
+        print("\t    2. Calculate mutation possibility (by selecting mutation")
+        print("\t    3. Find out how to get plant")
+        print("\t    4. Get best layout")
+        print("\tOther. Quit")
+        choice = int(input("Choice : "))
 
-    if choice == 1:
-        basic_garden(garden, cps)
-    elif choice == 2:
-        get_mutations(garden)
-    elif choice == 3:
-        get_best_layout(garden)
+        if choice == 1:
+            basic_garden(garden, cps)
+            time.sleep(3)
+        elif choice == 2:
+            auto_garden(garden, cps)
+            time.sleep(3)
+        elif choice == 3:
+            get_mutations(garden)
+            time.sleep(3)
+        elif choice == 4:
+            get_best_layout(garden)
+            time.sleep(3)
+        else:
+            break
