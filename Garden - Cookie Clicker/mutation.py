@@ -362,15 +362,16 @@ def get_mutations(garden):
     plant = garden.get_plant(name)
     plant.print_mutations()
 
-garden = Garden()
-garden.include_mutations()
+if __name__ == "__main__":
+    garden = Garden()
+    garden.include_mutations()
 
-print("Pick a choice!")
-print("\t1. Calculate mutation possibility")
-print("\t2. Find out how to get plant")
-choice = int(input("Choice : "))
+    print("Pick a choice!")
+    print("\t1. Calculate mutation possibility")
+    print("\t2. Find out how to get plant")
+    choice = int(input("Choice : "))
 
-if choice == 1:
-    basic_garden(garden)
-elif choice == 2:
-    get_mutations(garden)
+    if choice == 1:
+        basic_garden(garden)
+    elif choice == 2:
+        get_mutations(garden)
