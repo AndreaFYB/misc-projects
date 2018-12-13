@@ -148,7 +148,7 @@ class Garden:
         if(p1 == p2):
             for (x,y,_) in points:
                 cost += p1cost
-                plots.set(x,y, " P ")
+                plots.set(x,y, p1.code)
         else:
             pcs = (p1.code, p2.code) if p1cost < p2cost else (p2.code, p1.code)
             for (x,y,z) in points:
@@ -282,7 +282,7 @@ class Garden:
 
 class Mutation:
     def __init__(self, garden, plants, mut_rate):
-        self.mut_rate = mut_rate
+        self.mut_rate = float(mut_rate)
         self.conditions = []
 
         for x in plants:
@@ -619,7 +619,7 @@ if __name__ == "__main__":
     garden = None
 
     # Loading info from data file
-    garden = Garden("garden.dat")
+    garden = Garden("../garden.dat")
 
     while(True):
         # INFO header
