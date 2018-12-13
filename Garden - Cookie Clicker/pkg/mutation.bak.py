@@ -100,29 +100,35 @@ class Grid:
         return string
 
 class Garden:
-    def __init__(self, level=None, dimensions=None):
+    def __init__(self, filename, level=None, dimensions=None):
         self.garden = {}
+        self.load(filename)
 
-        level_grid_dict = {
-            1 : (2,2),
-            2 : (3,2),
-            3 : (3,3),
-            4 : (4,3),
-            5 : (4,4),
-            6 : (5,4),
-            7 : (5,5),
-            8 : (6,5),
-            9 : (6,6)
-        }
+        # level_grid_dict = {
+        #     1 : (2,2),
+        #     2 : (3,2),
+        #     3 : (3,3),
+        #     4 : (4,3),
+        #     5 : (4,4),
+        #     6 : (5,4),
+        #     7 : (5,5),
+        #     8 : (6,5),
+        #     9 : (6,6)
+        # }
 
-        if level is not None and dimensions is None:
-            dimensions = level_grid_dict[level]
-        elif (level is None and dimensions is None) or (level is not None and dimensions is not None):
-            raise RuntimeError("Level OR dimensions required! Not both, not neither!")
+        # if level is not None and dimensions is None:
+        #     dimensions = level_grid_dict[level]
+        # elif (level is None and dimensions is None) or (level is not None and dimensions is not None):
+        #     raise RuntimeError("Level OR dimensions required! Not both, not neither!")
         
-        self.level = (dimensions[0]-2)+(dimensions[1]-2)+1
-        self.plots = Grid(dimensions[0], dimensions[1], "-")
+        # self.level = (dimensions[0]-2)+(dimensions[1]-2)+1
+        # self.plots = Grid(dimensions[0], dimensions[1], "-")
 
+        # Uncomment if file loading isn't working properly.
+        # self.__hardcoded_plant_data()
+        # self.__hardcoded_mutation_data()
+
+    def __hardcoded_plant_data(self):
         plants = [
             ["Baker's Wheat", 5, 13, 1, 30, "Bak"],
             ["Thumbcorn", 3, 15, 5, 100, "Thu"],
@@ -166,7 +172,7 @@ class Garden:
     def get_plant(self, name):
         return self.garden[name.lower()]
 
-    def include_mutations(self):
+    def __hardcoded_mutation_data(self):
         g = self.garden
 
         mutations = [
@@ -296,10 +302,11 @@ class Garden:
             mutated = mutation[0]
             ingredients = mutation[1:]
 
+            # ing[0] are the conditions, ing[1] is the rate
             for ing in ingredients:
                 g[mutated.lower()].created_from(Mutation(self, ing[0], ing[1]))
 
-    def best_layout(self, p1, p2, cps):
+    def best_layout(self, p1, p2):
         best_by_dimensions = {
             (2,2) : [(0,0,'a'), (1,1,'b')],
             (3,2) : [(1,0,'a'), (1,1,'b')],
@@ -334,8 +341,8 @@ class Garden:
 
         cost = 0
 
-        p1cost = p1.get_cost(cps)
-        p2cost = p2.get_cost(cps)
+        p1cost = p1.get_cost(self.cps)
+        p2cost = p2.get_cost(self.cps)
 
         if(p1 == p2):
             for (x,y,_) in points:
@@ -371,6 +378,105 @@ class Garden:
                 mutations += [(v,mut)]
     
         return mutations
+    
+    def save_all_to_file(self, cps):
+        # backup file
+        backup = open("garden.bak", "w+")
+        file = open("garden.dat", "r+")
+
+        backup.write("{:-^70}\n".format(" " + get_time() + " "))
+        backup.write(file.read())
+        backup.write("{:-^70}\n".format(" BACKUP DONE "))
+
+        file = open("garden.dat", "w+")
+
+        #empty file
+        file.truncate(0)
+
+        # WRITING GARDEN STATUS
+        file.write("<-{:-^70}->\n".format(" GARDEN STATUS "))
+        file.write("LEVEL : {}\n".format(self.level))
+        file.write("DIMENSIONS : {}x{}\n".format(self.plots.dimensions[0], self.plots.dimensions[1]))
+        file.write("CPS : {}\n".format(num_to_word(cps)))
+
+        # WRITING PLANT DATA
+        file.write("<-{:-^70}->\n".format(" PLANT DATA "))
+
+        plants = [p for _,p in self.garden.items()]
+
+        # name, mat, life, cps_cost, min_cost, code="PNT"):
+
+        for plant in plants:
+            file.write("{:15} @@ {:5} @@ {:5} @@ {:7} @@ {:22d} @@ {:4}\n".format(
+                plant.name, plant.mat, plant.life, plant.cps_cost, plant.min_cost, plant.code
+            ))
+
+        muts = [(p.name, mut) for p in plants for mut in p.muts]
+
+        # WRITING MUTATION DATA
+        file.write("<-{:-^70}->\n".format(" MUTATION DATA "))
+
+        for mut in muts:
+            file.write("{:15} : {}\n".format(mut[0], mut[1].mutation_to_notation()))
+
+        # WRITING PLANT HISTORY
+        file.write("<-{:-^70}->\n".format(" PLANT HISTORY "))
+
+        for plant in self.history:
+            file.write("{}\n".format(plant))
+
+    def load(self, name):
+        data = open(name, "r+")
+
+        data = data.read().split("->\n")
+
+        gar_data = data[1].split("\n<-")[0]
+        pla_data = data[2].split("\n<-")[0]
+        mut_data = data[3].split("\n<-")[0]
+        his_data = data[4]
+
+        # Preparing garden data
+        garden_d = [s.split(" : ") for s in gar_data.split("\n")]
+        self.level = garden_d[0][1]
+        self.cps = garden_d[0][1]
+        dimensions = garden_d[0][1].split("x")
+        self.plots = Grid(dimensions[0], dimensions[1], "-")
+
+        plants = [n.split("@@") for n in pla_data.split("\n")]
+        mutations = [m.split(":") for m in mut_data.split("\n")]
+        history = his_data.split("\n")
+
+        pl_clean = []
+        mut_clean = []
+
+        for entry in plants:
+            line = [s.strip() for s in entry]
+            pl_clean += [line]
+
+        for entry in mutations:
+            line = [s.strip() for s in entry]
+            mut_clean += [line]
+
+        plants = pl_clean
+        mutations = mut_clean
+
+        for x in plants:
+            self.garden[x[0].lower()] = Plant(x[0], int(x[1]), int(x[2]), int(x[3]), int(x[4]), x[5])
+
+        for mutation in mutations:
+            mutated = mutation[0] # The plant the mutation results in
+            mut_info = mutation[1].split(" ==> ")
+            mut_rate = mut_info[0] # The rate of mutation
+            mut_nots = mut_info[1].split(" && ") # The conditions
+
+            self.garden[mutated.lower()].created_from(Mutation(self, mut_nots, mut_rate))
+
+        self.history = history
+        self.received = [self.get_plant(n) for n in history[:-2]]
+        self.remaining = [self.get_plant(n) for n in
+            list(set([p.name for _,p in self.garden.items()]) -
+                set([p.name for p in self.received]))
+        ]
 
 class Mutation:
     def __init__(self, garden, plants, mut_rate):
@@ -383,7 +489,7 @@ class Mutation:
 
                 plant = garden.get_plant(xsplit[0])
                 quantity = xsplit[1]
-                status = False
+                status = "M"
                 lessT = False
 
                 if "@" in quantity:
@@ -407,6 +513,12 @@ class Mutation:
 
                 plant = garden.get_plant(xsplit[0])
                 quantity = xsplit[1]
+                status = "M"
+
+                if "@" in quantity:
+                    xsplit2 = quantity.split("@")
+                    quantity = xsplit2[0]
+                    status = xsplit2[1]
 
                 self.conditions += [self.Condition(plant, quantity, exact = True)]
 
@@ -454,6 +566,31 @@ class Mutation:
         for plant in required_plants:
             if plant not in plants : return plant.name
         return True
+
+    def mutation_to_notation(self):
+        string = "{} ==> ".format(self.mut_rate)
+        notations = []
+        for con in self.conditions:
+            details = {
+                "name" : con.plant.name,
+                "quan" : con.quantity,
+                "stat" : con.status,
+                "to"   : con.to
+            }
+            template = ""
+            if con.lessT is False and con.exact is False and con.to == -1:
+                template = "{d[name]}!{d[quan]}@{d[stat]}"
+            elif con.lessT is True:
+                template = "{d[name]}!<{d[quan]}@{d[stat]}"
+            elif con.exact is True:
+                template = "{d[name]}!!{d[quan]}@{d[stat]}"
+            elif con.to > 0:
+                template = "{d[name]}!{d[quan]}-{d[to]}@{d[stat]}"
+            notations += [template.format(d=details)]
+        
+        string += " && ".join(notations)
+        return string
+
 
     class Condition:
         def __init__(self, plant, quantity = 1, status = "M", lessT = False, exact = False, to = -1):
@@ -575,7 +712,7 @@ def get_time(offset=0):
         ctime.tm_mday, ctime.tm_mon, ctime.tm_year)
 
 # menu funcs
-def basic_garden(garden, cps):
+def basic_garden(garden):
     wood_chips = input("Are you using wood chips? (Y for yes, N for no) : ")
 
     inp1 = input("Enter Plant 1's name : ")
@@ -606,7 +743,7 @@ def basic_garden(garden, cps):
 
     # Stores the best layout for the garden using plants p1 and p2.
     # Also has additional information about such a layout.
-    bl = garden.best_layout(p1,p2,cps)
+    bl = garden.best_layout(p1,p2)
 
     # Usable spaces are spaces that are both empty, AND do not have a chance of an unwanted mutation.
     usable_spaces = bl["usable"]
@@ -620,7 +757,7 @@ def basic_garden(garden, cps):
     # Displays the total cost of such a layout
     print("Total cost : {}".format(bl["cost"]))
 
-def auto_garden(garden, cps):
+def auto_garden(garden):
     wood_chips = input("Are you using wood chips? (Y/N) : ")
 
     pl_name = input("Enter the plant you want : ")
@@ -660,7 +797,7 @@ def auto_garden(garden, cps):
     # It will show the total list of ingredients required for the mutation.
     p1, p2 = b___plants[0], b___plants[1]
 
-    bl = garden.best_layout(p1, p2, cps)
+    bl = garden.best_layout(p1, p2)
     usable = bl["usable"]
 
     calculate_total_chance(wood_chips, p1, p2, usable, chosen_mut.mut_rate, pl_name.title())
@@ -679,43 +816,45 @@ if __name__ == "__main__":
 
     garden = None
 
-    # Displays current time
-    print_time("Current time : ")
+    # INFO!
+    # Following lines are deprecated.
+    # This information is now found in garden.dat.
+    # Modify that file to update info.
+    # Manual option coming soon!
 
-    # Accepts size of garden
-    g_size = input("Enter the level (1..9+) or dimensions (2x2...) of your garden : ")
+    # # Displays current time
+    # print_time("Current time : ")
 
-    # Accepts CPS note
-    cps = input("Enter your CPS : ").split(" ")
+    # # Accepts size of garden
+    # g_size = input("Enter the level (1..9+) or dimensions (2x2...) of your garden : ")
 
-    # Converts from word notation to number
-    cps = word_to_num(float(cps[0]), cps[1])
+    # # Accepts CPS note
+    # cps = input("Enter your CPS : ").split(" ")
 
-    # Initialises Garden object
-    if "x" in g_size:
-        spl = g_size.split("x")
-        garden = Garden(dimensions=(int(spl[0]), int(spl[1])))
-    else:
-        garden = Garden(level=int(g_size))
+    # # Converts from word notation to number
+    # cps = word_to_num(float(cps[0]), cps[1])
+
+    # # Initialises Garden object
+    # if "x" in g_size:
+    #     spl = g_size.split("x")
+    #     garden = Garden(dimensions=(int(spl[0]), int(spl[1])))
+    # else:
+    #     garden = Garden(level=int(g_size))
 
     # Includes mutations in garden
-    garden.include_mutations()
+    # No longer used due to loading from file.
+    # Deprecated
+    # garden.__hardcoded_mutation_data()
 
-    # Opens file for plant history
-    # Creates list of achieved plants, and list of unachieved plants.
-    plant_history = open("plants.grdn", "r+")
-    received = [garden.get_plant(n) for n in plant_history.read().split("\n")[:-1]]
-    remaining = [garden.get_plant(n) for n in
-        list(set([p.name for _,p in garden.garden.items()]) -
-            set([p.name for p in received]))
-    ]
+    # Loading info from page
+    garden.load("garden.dat")
 
     while(True):
         # INFO header
         print("{:-^70}".format(" INFO "))
 
         print_time("Current time : ")
-        print("CPS : {}".format(num_to_word(cps)))
+        print("CPS : {}".format(num_to_word(garden.cps)))
         print("Garden Level : {}".format(garden.level))
         print("Garden Dimensions : {}".format(garden.plots.dimensions))
 
@@ -727,37 +866,38 @@ if __name__ == "__main__":
         print("\t    2. Calculate mutation possibility (by selecting mutation)")
         print("\t    3. Find out how to get plant")
         print("\t    4. Find out what plants remain")
-        print("\t    5. Add achieved plant!")
+        # print("\t    5. Add achieved plant!")
         print("\tOther. Quit")
-        choice = int(input("Choice : "))
+        choice = input("Choice : ")
 
-        if choice == 1:
-            basic_garden(garden, cps)
+        if choice == "1":
+            basic_garden(garden)
             time.sleep(3)
 
-        elif choice == 2:
-            auto_garden(garden, cps)
+        elif choice == "2":
+            auto_garden(garden)
             time.sleep(3)
 
-        elif choice == 3:
+        elif choice == "3":
             get_mutations(garden)
             time.sleep(3)
 
-        elif choice == 4:
-            for p in remaining:
+        elif choice == "4":
+            for p in garden.remaining:
                 print("[{:^18}]".format(p.name))
-                achievable = p.achievable_by(received)
+                achievable = p.achievable_by(garden.received)
                 ach_string = "YES" if achievable[1] else "REQUIRED => " + ", ".join(achievable[0])
                 print("\tAchievable? : {}".format(ach_string))
             time.sleep(3)
 
-        elif choice == 5:
-            plant_achieved = input("Enter name of plant : ")
-            p = garden.get_plant(plant_achieved)
-            plant_history.write(p.name + "\n")
-            print("Saved plant!")
-            time.sleep(2)
+        # elif choice == "5":
+        #     plant_achieved = input("Enter name of plant : ")
+        #     p = garden.get_plant(plant_achieved)
+        #     plant_history.write(p.name + "\n")
+        #     print("Saved plant!")
+        #     time.sleep(2)
 
         else:
+            garden.save_all_to_file()
             break
 #END
