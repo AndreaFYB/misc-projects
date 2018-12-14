@@ -619,7 +619,7 @@ if __name__ == "__main__":
     garden = None
 
     # Loading info from data file
-    garden = Garden("../garden.dat")
+    garden = Garden("garden.dat")
 
     while(True):
         # INFO header
@@ -638,6 +638,7 @@ if __name__ == "__main__":
         print("\t    2. Calculate mutation possibility (by selecting mutation)")
         print("\t    3. Find out how to get plant")
         print("\t    4. Find out what plants remain")
+        print("\t    5. Change CPS")
         # print("\t    5. Add achieved plant!")
         print("\tOther. Quit")
         choice = input("Choice : ")
@@ -661,6 +662,11 @@ if __name__ == "__main__":
                 ach_string = "YES" if achievable[1] else "REQUIRED => " + ", ".join(achievable[0])
                 print("\tAchievable? : {}".format(ach_string))
             time.sleep(3)
+
+        elif choice == "5":
+            cps = input("Enter your CPS : ").split(" ")
+            garden.cps = word_to_num(float(cps[0]), cps[1])
+            time.sleep(2)
 
         # elif choice == "5":
         #     plant_achieved = input("Enter name of plant : ")
