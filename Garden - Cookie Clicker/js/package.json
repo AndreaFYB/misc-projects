@@ -1,0 +1,7 @@
+{
+    "name": "cc-garden",
+    "version": "0.1.0",
+    "dependencies": {
+        "moment": "^2.23.0"
+    }
+}
