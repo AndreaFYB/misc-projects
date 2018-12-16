@@ -26,8 +26,8 @@ export class Mutation {
     achievableBy(plants){
         let required = this.conditions.map(con => con.plant);
 
-        for(let i in required){
-            if (!required[i] in plants) return required[i].name;
+        for(let plant of required){
+            if (!plant in plants) return plant.name;
         }
 
         return true;

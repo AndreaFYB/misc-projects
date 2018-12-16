@@ -32,10 +32,22 @@ export class Plant {
     }
 
     mutatesFrom(ingredients){
-        // to be implemented
+        for(let mut of muts){
+            if(mut.matchIngredients(ingredients)){
+                return mut;
+            }
+        }
+        return false;
     }
 
     achievableBy(plants){
-        // to be implemented
+        missing = [];
+        for(mut of this.muts){
+            achieved = mut.achievableBy(plants);
+            if(achieved) return {mutation: mut, achievable: true, missing: null};
+            else missing.push(achieved);
+        }
+
+        return {mutation: null, achievable: false, missing: missing};
     }
 }
