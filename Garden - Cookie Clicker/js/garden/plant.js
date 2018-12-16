@@ -1,11 +1,12 @@
 export class Plant {
-    constructor(name, mat, life, cps_cost, min_cost, code="PNT"){
+    // eslint-disable-next-line max-params
+    constructor(name, mat, life, cpsCost, minCost, code="PNT"){
         this.name = name;
         this.mat = mat;
         this.life = life;
-        this.mat_age = life-mat;
-        this.cps_cost = cps_cost;
-        this.min_cost = min_cost;
+        this.matAge = life-mat;
+        this.cpsCost = cpsCost;
+        this.minCost = minCost;
         this.muts = [];
         this.code = code;
     }
@@ -28,11 +29,11 @@ export class Plant {
 
     getCost(cps){
         let total = cps * this.cps_cost * 60;
-        return total >= min_cost ? total : min_cost;
+        return total >= this.min_cost ? total : this.min_cost;
     }
 
     mutatesFrom(ingredients){
-        for(let mut of muts){
+        for(let mut of this.muts){
             if(mut.matchIngredients(ingredients)){
                 return mut;
             }
@@ -42,10 +43,12 @@ export class Plant {
 
     achievableBy(plants){
         let missing = [];
-        for(mut of this.muts){
-            achieved = mut.achievableBy(plants);
-            if(achieved) return {mutation: mut, achievable: true, missing: null};
-            else missing.push(achieved);
+        for(let mut of this.muts){
+            let achieved = mut.achievableBy(plants);
+            if(achieved == true){
+                return {mutation: mut, achievable: true, missing: null};
+            // eslint-disable-next-line no-else-return
+            } else missing.push(achieved);
         }
 
         return {mutation: null, achievable: false, missing: missing};

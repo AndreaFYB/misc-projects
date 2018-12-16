@@ -1,24 +1,25 @@
 export class Mutation {
-    constructor(garden, plants, mutRate){
-        // to be implemented
-    }
+    // constructor(garden, plants, mutRate){
+    //     // to be implemented
+    // }
 
     matchIngredients(ingredients){
         let ingnames = ingredients.map(p => p.name);
 
-        let count = {}
+        let count = {};
 
         ingnames.forEach(name => {
             count[name] = count[name] ? count[name]+1 : 1;
-        })
+        });
 
+        // eslint-disable-next-line consistent-return
         this.conditions.forEach(con => {
-            if(!con.plant.name in count) return false;
+            if(!(con.plant.name in count)) return false;
             let countP = count[con.plant.name];
             if(con.lessT) if(countP >= con.quantity) return false;
             else if(con.exact) if(countP !== con.quantity) return false;
             else if(countP < con.quantity) return false;
-        })
+        });
 
         return true;
     }
@@ -27,7 +28,7 @@ export class Mutation {
         let required = this.conditions.map(con => con.plant);
 
         for(let plant of required){
-            if (!plant in plants) return plant.name;
+            if (!(plant in plants)) return plant.name;
         }
 
         return true;
@@ -35,29 +36,18 @@ export class Mutation {
 
     toNotation(){
         let str = `${this.mutRate} ==> `;
-        let notations = []
+        let notations = [];
 
-        conditions.forEach(con => {
-            lessT = con.lessT ? "<" : "";
-            exact = con.exact ? "!" : "";
-            to    = con.to > 0 ? `-${con.to}` : "";
+        this.conditions.forEach(con => {
+            let lessT = con.lessT ? "<" : "";
+            let exact = con.exact ? "!" : "";
+            let to    = con.to > 0 ? `-${con.to}` : "";
             
-            notations.push(`${con.plant.name}!${exact}${lessT}${con.quantity}${con.to}@${con.status}`);
-        })
+            notations.push(`${con.plant.name}!${exact}${lessT}${con.quantity}${to}@${con.status}`);
+        });
 
         str += notations.join(" && ");
 
         return str;
-    }
-}
-
-class Condition {
-    constructor(plant, quantity=1, status="M", lessT = false, exact = false, to = -1){
-        this.plant = plant;
-        this.quantity = quantity;
-        this.status = status;
-        this.exact = exact;
-        this.lessT = lessT;
-        this.to = to <= quantity ? -1 : to;
     }
 }

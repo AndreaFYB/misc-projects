@@ -1,6 +1,6 @@
-import Grid from "../utils/grid"
-import Mutation from "./mutation"
-import Plant from "./plant"
+import Grid from "../utils/grid";
+
+import {numToWord} from "../utils/funcs";
 
 export class Garden {
     constructor(filename){
@@ -9,7 +9,7 @@ export class Garden {
     }
 
     getPlant(pname){
-        return garden[pname.toLowerCase()];
+        return this.garden[pname.toLowerCase()];
     }
 
     bestLayout(p1, p2){
@@ -25,7 +25,7 @@ export class Garden {
             "5x5" : {"a": [[0,0], [3,0], [0,3], [3,3]],               "b": [[1,0], [4,0], [1,3], [4,3]]},
             "6x5" : {"a": [[1,0], [1,3], [4,0], [4,3]],               "b": [[1,1], [1,4], [4,1], [4,4]]},
             "6x6" : {"a": [[0,1], [5,1], [2,4], [0,4], [5,4], [3,1]], "b": [[1,1], [4,4], [1,4], [4,1]]}
-        }
+        };
 
         let unwantedMuts = {
             "2x2" : [],
@@ -37,13 +37,16 @@ export class Garden {
             "5x5" : [],
             "6x5" : [],
             "6x6" : [[4,0], [4,2], [1,3], [1,5]],
-        }
+        };
 
         let pointsAB = bestByDim[dims];
         let pointsXX = unwantedMuts[dims];
-        let tplot = new Grid(this.plots.dimensions["x"], this.plots.dimensions["y"], "---")
+        let tplot = new Grid(this.plots.dimensions["x"], this.plots.dimensions["y"], "---");
 
         let cost = 0;
+
+        let p1cost = p1.getCost(this.cps);
+        let p2cost = p2.getCost(this.cps);
 
         let plants = {
             "a" : {
@@ -52,19 +55,19 @@ export class Garden {
             "b" : {
                 "plant" : (p1cost >= p2cost) ? p1 : p2
             }
-        }
+        };
 
         plants.a["cost"] = plants.a.plant.getCost(this.cps);
         plants.b["cost"] = plants.b.plant.getCost(this.cps);
 
-        fillInGrid = (arr, elem, pcost) => {
+        let fillInGrid = (arr, elem, pcost) => {
             cost = 0;
             arr.forEach(p => {
                 tplot.set(p[0], p[1], elem);
-                pcost += cost;
-            })
+                cost += pcost;
+            });
             return cost;
-        }
+        };
 
         let costA = fillInGrid(pointsAB["a"], plants.a.plant.code, plants.a.cost);
         let costB = fillInGrid(pointsAB["b"], plants.b.plant.code, plants.b.cost);
@@ -76,24 +79,24 @@ export class Garden {
             "usable" : self.plots.area - pointsAB["a"] - pointsAB["b"] - pointsXX.length,
             "unwanted" : pointsXX.length,
             "cost" : numToWord(costA+costB)
-        }
+        };
     }
 
     getMutsByIngs(ingredients){
-        mutations = [];
-        for(let plant of garden.values()){
-            let mut = plant.mutatesFrom(ingredients)
+        let mutations = [];
+        for(let plant of this.garden.values()){
+            let mut = plant.mutatesFrom(ingredients);
             if(mut != false) mutations.push({plant: plant, mutation: mut});
         }
 
         return mutations;
     }
 
-    saveAllToFile(){
-        // to be implemented
-    }
+    // saveAllToFile(){
+    //     // to be implemented
+    // }
 
-    load(filename){
-        // to be implemented
-    }
+    // load(filename){
+    //     // to be implemented
+    // }
 }
