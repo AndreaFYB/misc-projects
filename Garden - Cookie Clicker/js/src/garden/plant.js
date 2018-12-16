@@ -19,12 +19,12 @@ export class Plant {
         this.muts.push(mutation);
     }
 
+    // TODO: Implement
     printDetails(){
-        // to be implemented
     }
 
+    // TODO: Implement
     printMuts(){
-        // to be implemented
     }
 
     getCost(cps){

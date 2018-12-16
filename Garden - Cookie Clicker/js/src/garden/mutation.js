@@ -1,7 +1,7 @@
 export class Mutation {
-    // constructor(garden, plants, mutRate){
-    //     // to be implemented
-    // }
+    // TODO: Implement
+    constructor(/*garden, plants, mutRate*/){
+    }
 
     matchIngredients(ingredients){
         let ingnames = ingredients.map(p => p.name);

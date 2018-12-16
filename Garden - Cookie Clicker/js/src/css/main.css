@@ -1,0 +1,25 @@
+body {
+    display: grid;
+    grid-template-columns: 100px auto 100px;
+    margin: 0;
+}
+
+.header {
+    grid-column: 1/4;
+    background: linear-gradient(rgb(180,50,50), rgb(180,100,50));
+    padding: 15px;
+    color: white;
+    width: 100%;
+    justify-self: center;
+    display: grid;
+    grid-template-rows: auto auto;
+    justify-content: center;
+}
+
+h1, h2{
+    margin: 0;
+}
+
+.center {
+    justify-self: center;
+}

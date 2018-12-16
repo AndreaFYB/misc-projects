@@ -92,11 +92,11 @@ export class Garden {
         return mutations;
     }
 
-    // saveAllToFile(){
-    //     // to be implemented
-    // }
+    // TODO: Implement
+    saveAllToFile(){
+    }
 
-    // load(filename){
-    //     // to be implemented
-    // }
+    // TODO: Implement
+    load(/*filename*/){
+    }
 }

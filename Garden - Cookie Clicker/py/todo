@@ -1,0 +1,3 @@
+TODOLIST:
+- save garden data as JSON file instead of custom .dat file
+    - purpose of this is for easy working with js
