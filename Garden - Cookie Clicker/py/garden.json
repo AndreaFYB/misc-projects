@@ -2,8 +2,8 @@
     "garden": {
         "level": "5",
         "dimensions": {
-            "x" : 4,
-            "y" : 4
+            "x": 4,
+            "y": 4
         },
         "cps": "2.473 nonillion"
     },
