@@ -1,4 +1,4 @@
-export class Grid {
+export default class Grid {
     constructor(x, y, elem=null){
         this.dimensions = {x: x, y: y};
         this.area = x*y;

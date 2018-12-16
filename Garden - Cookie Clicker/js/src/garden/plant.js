@@ -1,4 +1,4 @@
-export class Plant {
+export default class Plant {
     // eslint-disable-next-line max-params
     constructor(name, mat, life, cpsCost, minCost, code="PNT"){
         this.name = name;

@@ -1,6 +1,6 @@
-export class Mutation {
+export default class Mutation {
     // TODO: Implement
-    constructor(/*garden, plants, mutRate*/){
+    constructor(garden, plants, mutRate){
     }
 
     matchIngredients(ingredients){

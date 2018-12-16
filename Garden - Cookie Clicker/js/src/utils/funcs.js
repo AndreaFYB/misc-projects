@@ -39,7 +39,11 @@ export function numToWord(num){
  * @param {String} extension - the word extension that refers to the size 
  * @returns {Number} - the full decimal number representation
  */
-export function wordToNum(num, extension){
+export function wordToNum(str){
+    let phr = str.split(" ");
+    let num = phr[0];
+    let extension = phr[1];
+    
     let exps = [];
 
     for(let i = 6; i <= 52; i+=3){

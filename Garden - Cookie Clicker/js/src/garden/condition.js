@@ -1,4 +1,4 @@
-export class Condition {
+export default class Condition {
     // eslint-disable-next-line max-params
     constructor(plant, quantity=1, status="M", lessT = false, exact = false, to = -1){
         this.plant = plant;

@@ -1,11 +1,48 @@
 import Grid from "../utils/grid";
+import Plant from "./plant";
+import Mutation from "./mutation";
 
-import {numToWord} from "../utils/funcs";
+import {numToWord, wordToNum} from "../utils/funcs";
 
-export class Garden {
-    constructor(filename){
+export default class Garden {
+    constructor(data){
         this.garden = {};
-        this.load(filename);
+        
+        let gData = data.garden;
+        let pData = data.plants;
+        let mData = data.mutations;
+        let hData = data.history;
+
+        // Preparing garden data
+        this.level = gData.level;
+        this.plots = new Grid(gData.dimensions.x, gData.dimensions.y, "-");
+        this.cps = wordToNum(gData.cps);
+
+        for(let name in pData){
+            let p = pData[name];
+            this.garden[name.toLowerCase()] = 
+                new Plant(name, p.maturity, p.lifespan, p["cps-cost"], p["min-cost"], p.code);
+        }
+
+        for(let name in mData){
+            for(let condition of mData[name]){
+                let mInfo = condition.split(" ==> ");
+                let mRate = mInfo[0];
+                let mNots = mInfo[1].split(" && ");
+
+                this.garden[name.toLowerCase()].createdFrom(new Mutation(this, mNots, mRate));
+            }
+        }
+
+        this.history = hData;
+        this.received = hData.map(name => this.getPlant(name));
+
+        let allPlants = Object.values(this.garden).map(p => p.name);
+        let recPlants = new Set(this.received.map(p => p.name));
+
+        this.remaining = Array
+            .from(allPlants.filter(x => !(recPlants.has(x))))
+            .map(name => this.getPlant(name));
     }
 
     getPlant(pname){
@@ -94,9 +131,5 @@ export class Garden {
 
     // TODO: Implement
     saveAllToFile(){
-    }
-
-    // TODO: Implement
-    load(/*filename*/){
     }
 }
