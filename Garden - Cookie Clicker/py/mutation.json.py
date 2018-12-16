@@ -101,7 +101,7 @@ class Grid:
         return string
 
 class Garden:
-    def __init__(self, filename, level=None, dimensions=None):
+    def __init__(self, filename="garden.json", level=None, dimensions=None):
         self.garden = {}
         self.load(filename)
 
@@ -181,16 +181,8 @@ class Garden:
     
         return mutations
     
-    def save_all_to_file(self):
-        # backup file
-        backup = open("garden.bak", "w+")
-        file = open("garden.dat", "r+")
-
-        backup.write("{:-^70}\n".format(" " + get_time() + " "))
-        backup.write(file.read())
-        backup.write("{:-^70}\n".format(" BACKUP DONE "))
-
-        file = open("garden.json", "w+")
+    def save_all_to_file(self, filename="garden.json"):
+        file = open(filename, "w+")
 
         #empty file
         file.truncate(0)
@@ -199,7 +191,10 @@ class Garden:
         details = {
             "garden" : {
                 "level" : self.level,
-                "dimensions" : "{}x{}".format(self.plots.dimensions[0], self.plots.dimensions[1]),
+                "dimensions" : {
+                   "x" : self.plots.dimensions[0],
+                   "y" : self.plots.dimensions[1]
+                },
                 "cps" : num_to_word(self.cps)
             },
             "plants" : {},
@@ -236,52 +231,32 @@ class Garden:
     def load(self, name):
         data = open(name, "r+")
 
-        data = data.read().split("->\n")
+        data = json.loads(data.read())
 
-        gar_data = data[1].split("\n<-")[0]
-        pla_data = data[2].split("\n<-")[0]
-        mut_data = data[3].split("\n<-")[0]
-        his_data = data[4]
+        g_data = data["garden"]
+        p_data = data["plants"]
+        m_data = data["mutations"]
+        h_data = data["history"]
 
         # Preparing garden data
-        garden_d = [s.split(" : ") for s in gar_data.split("\n")]
-        self.level = garden_d[0][1]
-        dimensions = garden_d[1][1].split("x")
-        self.plots = Grid(int(dimensions[0]), int(dimensions[1]), "-")
-        cps = garden_d[2][1].split(" ")
-        self.cps = word_to_num(float(cps[0]), cps[1])
+        self.level = g_data["level"]
+        self.plots = Grid(g_data["dimensions"]["x"], g_data["dimensions"]["y"], "-")
+        cps = g_data["cps"].split(" ")
+        self.cps = word_to_num(cps[0], cps[1])
 
-        plants = [n.split("@@") for n in pla_data.split("\n")]
-        mutations = [m.split(":") for m in mut_data.split("\n")]
-        history = his_data.split("\n")
+        for k, v in p_data.items():
+            self.garden[k.lower()] = Plant(k, v["maturity"], v["lifespan"], v["cps-cost"], v["min-cost"], v["code"])
 
-        pl_clean = []
-        mut_clean = []
+        for name, mutations in m_data.items():
+            for condition in mutations:
+                m_info = condition.split(" ==> ")
+                m_rate = m_info[0]
+                m_nots = m_info[1].split(" && ")
 
-        for entry in plants:
-            line = [s.strip() for s in entry]
-            pl_clean += [line]
+                self.garden[name.lower()].created_from(Mutation(self, m_nots, m_rate))
 
-        for entry in mutations:
-            line = [s.strip() for s in entry]
-            mut_clean += [line]
-
-        plants = pl_clean
-        mutations = mut_clean
-
-        for x in plants:
-            self.garden[x[0].lower()] = Plant(x[0], int(x[1]), int(x[2]), int(x[3]), int(x[4]), x[5])
-
-        for mutation in mutations:
-            mutated = mutation[0] # The plant the mutation results in
-            mut_info = mutation[1].split(" ==> ")
-            mut_rate = mut_info[0] # The rate of mutation
-            mut_nots = mut_info[1].split(" && ") # The conditions
-
-            self.garden[mutated.lower()].created_from(Mutation(self, mut_nots, mut_rate))
-
-        self.history = history
-        self.received = [self.get_plant(n) for n in history if n != ""]
+        self.history = h_data
+        self.received = [self.get_plant(n) for n in h_data if n != ""]
         self.remaining = [self.get_plant(n) for n in
             list(set([p.name for _,p in self.garden.items()]) -
                 set([p.name for p in self.received]))
@@ -441,7 +416,7 @@ def word_to_num(num, extension):
 
     word_num = dict(zip(extensions, ext_nums))
 
-    return num * float(word_num[extension])
+    return float(num) * float(word_num[extension])
 
 def num_to_word(num):
     extensions = [
@@ -625,8 +600,8 @@ if __name__ == "__main__":
 
     garden = None
 
-    # Loading info from json file
-    garden = Garden("garden.json")
+    # Load garden
+    garden = Garden()
 
     while(True):
         # INFO header
@@ -646,7 +621,7 @@ if __name__ == "__main__":
         print("\t    3. Find out how to get plant")
         print("\t    4. Find out what plants remain")
         print("\t    5. Change CPS")
-        # print("\t    5. Add achieved plant!")
+        print("\t    6. Add achieved plant!")
         print("\tOther. Quit")
         choice = input("Choice : ")
 
@@ -675,12 +650,11 @@ if __name__ == "__main__":
             garden.cps = word_to_num(float(cps[0]), cps[1])
             time.sleep(2)
 
-        # elif choice == "5":
-        #     plant_achieved = input("Enter name of plant : ")
-        #     p = garden.get_plant(plant_achieved)
-        #     plant_history.write(p.name + "\n")
-        #     print("Saved plant!")
-        #     time.sleep(2)
+        elif choice == "6":
+            plant_achieved = input("Enter name of plant : ")
+            garden.history += [plant_achieved]
+            print("Saved plant!")
+            time.sleep(2)
 
         else:
             garden.save_all_to_file()

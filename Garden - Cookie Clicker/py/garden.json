@@ -1,7 +1,10 @@
 {
     "garden": {
         "level": "5",
-        "dimensions": "4x4",
+        "dimensions": {
+            "x" : 4,
+            "y" : 4
+        },
         "cps": "2.473 nonillion"
     },
     "plants": {
