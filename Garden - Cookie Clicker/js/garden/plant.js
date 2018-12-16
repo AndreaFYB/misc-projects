@@ -41,7 +41,7 @@ export class Plant {
     }
 
     achievableBy(plants){
-        missing = [];
+        let missing = [];
         for(mut of this.muts){
             achieved = mut.achievableBy(plants);
             if(achieved) return {mutation: mut, achievable: true, missing: null};

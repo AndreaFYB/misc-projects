@@ -80,7 +80,13 @@ export class Garden {
     }
 
     getMutsByIngs(ingredients){
-        // to be implemented
+        mutations = [];
+        for(let plant of garden.values()){
+            let mut = plant.mutatesFrom(ingredients)
+            if(mut != false) mutations.push({plant: plant, mutation: mut});
+        }
+
+        return mutations;
     }
 
     saveAllToFile(){
