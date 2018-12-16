@@ -1,6 +1,13 @@
+import Condition from "./condition";
+
 export default class Mutation {
-    // TODO: Implement
     constructor(garden, plants, mutRate){
+        this.mutRate = mutRate;
+        this.conditions = [];
+
+        for(let plant of plants){
+            this.conditions.push(Condition.fromNotation(garden, plant));
+        }
     }
 
     matchIngredients(ingredients){
