@@ -1,0 +1,394 @@
+{
+    "garden": {
+        "level": "5",
+        "dimensions": "4x4",
+        "cps": "2.473 nonillion"
+    },
+    "plants": {
+        "Baker's Wheat": {
+            "maturity": 5,
+            "lifespan": 13,
+            "cps-cost": 1,
+            "min-cost": 30,
+            "code": "Bak"
+        },
+        "Thumbcorn": {
+            "maturity": 3,
+            "lifespan": 15,
+            "cps-cost": 5,
+            "min-cost": 100,
+            "code": "Thu"
+        },
+        "Cronerice": {
+            "maturity": 74,
+            "lifespan": 134,
+            "cps-cost": 15,
+            "min-cost": 250,
+            "code": "Cro"
+        },
+        "Gildmillet": {
+            "maturity": 15,
+            "lifespan": 37,
+            "cps-cost": 15,
+            "min-cost": 1500,
+            "code": "Gil"
+        },
+        "Clover": {
+            "maturity": 20,
+            "lifespan": 58,
+            "cps-cost": 25,
+            "min-cost": 77777,
+            "code": "Clo"
+        },
+        "Golden Clover": {
+            "maturity": 5,
+            "lifespan": 10,
+            "cps-cost": 125,
+            "min-cost": 777777777,
+            "code": "GCl"
+        },
+        "Shimmerlily": {
+            "maturity": 9,
+            "lifespan": 13,
+            "cps-cost": 60,
+            "min-cost": 777777,
+            "code": "Shi"
+        },
+        "Elderwort": {
+            "maturity": 164,
+            "lifespan": 9999,
+            "cps-cost": 180,
+            "min-cost": 100000000,
+            "code": "Eld"
+        },
+        "Bakeberry": {
+            "maturity": 34,
+            "lifespan": 67,
+            "cps-cost": 45,
+            "min-cost": 100000000,
+            "code": "Bkb"
+        },
+        "Chocoroot": {
+            "maturity": 7,
+            "lifespan": 25,
+            "cps-cost": 15,
+            "min-cost": 100000,
+            "code": "Cho"
+        },
+        "White Chocoroot": {
+            "maturity": 7,
+            "lifespan": 25,
+            "cps-cost": 15,
+            "min-cost": 100000,
+            "code": "WCh"
+        },
+        "Meddleweed": {
+            "maturity": 4,
+            "lifespan": 8,
+            "cps-cost": 1,
+            "min-cost": 10,
+            "code": "Med"
+        },
+        "Whiskerbloom": {
+            "maturity": 20,
+            "lifespan": 34,
+            "cps-cost": 20,
+            "min-cost": 1000000,
+            "code": "Whi"
+        },
+        "Chimerose": {
+            "maturity": 18,
+            "lifespan": 58,
+            "cps-cost": 15,
+            "min-cost": 242424,
+            "code": "Chi"
+        },
+        "Nursetulip": {
+            "maturity": 40,
+            "lifespan": 64,
+            "cps-cost": 40,
+            "min-cost": 1000000000,
+            "code": "Nur"
+        },
+        "Drowsyfern": {
+            "maturity": 300,
+            "lifespan": 1000,
+            "cps-cost": 90,
+            "min-cost": 100000,
+            "code": "Dro"
+        },
+        "Wardlichen": {
+            "maturity": 10,
+            "lifespan": 15,
+            "cps-cost": 10,
+            "min-cost": 10000,
+            "code": "War"
+        },
+        "Keenmoss": {
+            "maturity": 10,
+            "lifespan": 16,
+            "cps-cost": 50,
+            "min-cost": 1000000,
+            "code": "Kee"
+        },
+        "Queenbeet": {
+            "maturity": 67,
+            "lifespan": 84,
+            "cps-cost": 90,
+            "min-cost": 1000000000,
+            "code": "Qbt"
+        },
+        "Juicy Queenbeet": {
+            "maturity": 1063,
+            "lifespan": 1250,
+            "cps-cost": -1,
+            "min-cost": -1,
+            "code": "JQB"
+        },
+        "Duketater": {
+            "maturity": 212,
+            "lifespan": 223,
+            "cps-cost": 480,
+            "min-cost": 1000000000000,
+            "code": "Duk"
+        },
+        "Shriekbulb": {
+            "maturity": 18,
+            "lifespan": 29,
+            "cps-cost": 60,
+            "min-cost": 4444000000000,
+            "code": "Shr"
+        },
+        "Tidygrass": {
+            "maturity": 80,
+            "lifespan": 200,
+            "cps-cost": 90,
+            "min-cost": 100000000000000,
+            "code": "Tid"
+        },
+        "Everdaisy": {
+            "maturity": 250,
+            "lifespan": 9999,
+            "cps-cost": 180,
+            "min-cost": 100000000000000000000,
+            "code": "Eve"
+        },
+        "White Mildew": {
+            "maturity": 5,
+            "lifespan": 8,
+            "cps-cost": 20,
+            "min-cost": 9999,
+            "code": "WhM"
+        },
+        "Brown Mold": {
+            "maturity": 5,
+            "lifespan": 8,
+            "cps-cost": 20,
+            "min-cost": 9999,
+            "code": "BrM"
+        },
+        "Crumbspore": {
+            "maturity": 15,
+            "lifespan": 23,
+            "cps-cost": 10,
+            "min-cost": 999,
+            "code": "Cru"
+        },
+        "Doughshroom": {
+            "maturity": 43,
+            "lifespan": 50,
+            "cps-cost": 100,
+            "min-cost": 100000000,
+            "code": "Dou"
+        },
+        "Glovemorel": {
+            "maturity": 7,
+            "lifespan": 9,
+            "cps-cost": 30,
+            "min-cost": 10000,
+            "code": "Glo"
+        },
+        "Cheapcap": {
+            "maturity": 3,
+            "lifespan": 8,
+            "cps-cost": 40,
+            "min-cost": 100000,
+            "code": "Che"
+        },
+        "Fool Bolete": {
+            "maturity": 3,
+            "lifespan": 6,
+            "cps-cost": 15,
+            "min-cost": 10000,
+            "code": "Foo"
+        },
+        "Wrinklegill": {
+            "maturity": 26,
+            "lifespan": 40,
+            "cps-cost": 20,
+            "min-cost": 1000000,
+            "code": "Wri"
+        },
+        "Green Rot": {
+            "maturity": 4,
+            "lifespan": 6,
+            "cps-cost": 60,
+            "min-cost": 1000000,
+            "code": "Gre"
+        },
+        "Ichorpuff": {
+            "maturity": 20,
+            "lifespan": 58,
+            "cps-cost": 120,
+            "min-cost": 987654321,
+            "code": "Ich"
+        }
+    },
+    "mutations": {
+        "Baker's Wheat": [
+            "0.2 ==> Baker's Wheat!2@False",
+            "0.05 ==> Thumbcorn!2@False"
+        ],
+        "Thumbcorn": [
+            "0.05 ==> Baker's Wheat!2@False",
+            "0.1 ==> Thumbcorn!2@False",
+            "0.02 ==> Cronerice!2@False"
+        ],
+        "Cronerice": [
+            "0.01 ==> Baker's Wheat!1@M && Thumbcorn!1@M"
+        ],
+        "Gildmillet": [
+            "0.03 ==> Cronerice!1@M && Thumbcorn!1@M"
+        ],
+        "Clover": [
+            "0.03 ==> Baker's Wheat!1@M && Gildmillet!1@M",
+            "0.007 ==> Clover!2@False && Clover!<5@Any"
+        ],
+        "Golden Clover": [
+            "0.0007 ==> Baker's Wheat!1@M && Gildmillet!1@M",
+            "0.0001 ==> Clover!2-4@False",
+            "0.0007 ==> Clover!4@False"
+        ],
+        "Shimmerlily": [
+            "0.02 ==> Clover!1@M && Gildmillet!1@M"
+        ],
+        "Elderwort": [
+            "0.01 ==> Shimmerlily!1@M && Cronerice!1@M",
+            "0.002 ==> Wrinklegill!1@M && Cronerice!1@M"
+        ],
+        "Bakeberry": [
+            "0.001 ==> Baker's Wheat!2@False"
+        ],
+        "Chocoroot": [
+            "0.1 ==> Baker's Wheat!1@M && Brown Mold!1@Any"
+        ],
+        "White Chocoroot": [
+            "0.1 ==> Chocoroot!1@M && White Mildew!1@Any"
+        ],
+        "Meddleweed": [
+            "0.15 ==> Meddleweed!1@False && Meddleweed!<3@Any"
+        ],
+        "Whiskerbloom": [
+            "0.01 ==> Shimmerlily!1@M && White Chocoroot!1@M"
+        ],
+        "Chimerose": [
+            "0.05 ==> Shimmerlily!1@M && Whiskerbloom!1@M",
+            "0.005 ==> Chimerose!2@False"
+        ],
+        "Nursetulip": [
+            "0.05 ==> Whiskerbloom!2@False"
+        ],
+        "Drowsyfern": [
+            "0.005 ==> Chocoroot!1@M && Keenmoss!1@M"
+        ],
+        "Wardlichen": [
+            "0.005 ==> Cronerice!1@M && Keenmoss!1@M",
+            "0.005 ==> Cronerice!1@M && White Mildew!1@M",
+            "0.05 ==> Wardlichen!!1@M"
+        ],
+        "Keenmoss": [
+            "0.1 ==> Green Rot!1@M && Brown Mold!1@M",
+            "0.05 ==> Keenmoss!!1@M"
+        ],
+        "Queenbeet": [
+            "0.01 ==> Bakeberry!1@M && Chocoroot!1@M"
+        ],
+        "Juicy Queenbeet": [
+            "0.001 ==> Queenbeet!8@False"
+        ],
+        "Duketater": [
+            "0.001 ==> Queenbeet!2@False"
+        ],
+        "Shriekbulb": [
+            "0.001 ==> Wrinklegill!1@M && Elderwort!1@M",
+            "0.001 ==> Elderwort!5@False",
+            "0.005 ==> Duketater!3@Any",
+            "0.002 ==> Doughshroom!4@Any",
+            "0.001 ==> Queenbeet!5@False",
+            "0.005 ==> Shriekbulb!!1@M"
+        ],
+        "Tidygrass": [
+            "0.002 ==> Baker's Wheat!1@M && White Chocoroot!1@M"
+        ],
+        "Everdaisy": [
+            "0.002 ==> Tidygrass!3@False && Elderwort!3@False"
+        ],
+        "White Mildew": [
+            "0.5 ==> Brown Mold!1@M && White Mildew!<2@Any"
+        ],
+        "Brown Mold": [
+            "0.5 ==> White Mildew!1@M && Brown Mold!<2@Any"
+        ],
+        "Crumbspore": [
+            "0.07 ==> Crumbspore!!1@M",
+            "0.005 ==> Doughshroom!2@False"
+        ],
+        "Doughshroom": [
+            "0.005 ==> Crumbspore!2@False",
+            "0.07 ==> Doughshroom!!1@M"
+        ],
+        "Glovemorel": [
+            "0.01 ==> Crumbspore!1@M && Thumbcorn!1@M"
+        ],
+        "Cheapcap": [
+            "0.03 ==> Crumbspore!1@M && Shimmerlily!1@M"
+        ],
+        "Fool Bolete": [
+            "0.02 ==> Doughshroom!1@M && Green Rot!1@M"
+        ],
+        "Wrinklegill": [
+            "0.06 ==> Crumbspore!1@M && Brown Mold!1@M"
+        ],
+        "Green Rot": [
+            "0.05 ==> White Mildew!1@M && Clover!1@M"
+        ],
+        "Ichorpuff": [
+            "0.002 ==> Elderwort!1@M && Crumbspore!1@M"
+        ]
+    },
+    "history": [
+        "Baker's Wheat",
+        "Thumbcorn",
+        "Cronerice",
+        "Gildmillet",
+        "Clover",
+        "Shimmerlily",
+        "Chocoroot",
+        "White Chocoroot",
+        "White Mildew",
+        "Brown Mold",
+        "Meddleweed",
+        "Whiskerbloom",
+        "Chimerose",
+        "Nursetulip",
+        "Keenmoss",
+        "Crumbspore",
+        "Doughshroom",
+        "Wrinklegill",
+        "Green Rot",
+        "Elderwort",
+        "Drowsyfern",
+        "Bakeberry",
+        "Queenbeet"
+    ]
+}
