@@ -1,7 +1,8 @@
+import "bootstrap";
+import "bootstrap/dist/css/bootstrap.min.css";
 import "./css/main.css";
-import Data from "../garden.json";
-import Garden from "./garden/garden";
+import GardenController from "./controllers/GardenController";
 
-console.log(Data);
-let garden = new Garden(Data);
-console.log(garden);
+let gController = new GardenController();
+
+let garden = gController.garden;

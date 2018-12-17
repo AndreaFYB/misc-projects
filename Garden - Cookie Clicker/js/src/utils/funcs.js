@@ -35,8 +35,7 @@ export function numToWord(num){
  * This function is the inverse of numToWord.
  * It converts a number in english notation into a decimal
  *  number that can be used in calculations.
- * @param {Number} num - the number being extended
- * @param {String} extension - the word extension that refers to the size 
+ * @param {Number} str - the phrase in question
  * @returns {Number} - the full decimal number representation
  */
 export function wordToNum(str){

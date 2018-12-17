@@ -6,21 +6,21 @@ import {numToWord, wordToNum} from "../utils/funcs";
 
 export default class Garden {
     constructor(data){
-        this.garden = {};
+        this.plants = {};
         
         let gData = data.garden;
         let pData = data.plants;
         let mData = data.mutations;
         let hData = data.history;
 
-        // Preparing garden data
+        // Preparing plants data
         this.level = gData.level;
         this.plots = new Grid(gData.dimensions.x, gData.dimensions.y, "-");
         this.cps = wordToNum(gData.cps);
 
         for(let name in pData){
             let p = pData[name];
-            this.garden[name.toLowerCase()] = 
+            this.plants[name.toLowerCase()] = 
                 new Plant(name, p.maturity, p.lifespan, p["cps-cost"], p["min-cost"], p.code);
         }
 
@@ -30,14 +30,14 @@ export default class Garden {
                 let mRate = mInfo[0];
                 let mNots = mInfo[1].split(" && ");
 
-                this.garden[name.toLowerCase()].createdFrom(new Mutation(this, mNots, mRate));
+                this.plants[name.toLowerCase()].createdFrom(new Mutation(this, mNots, mRate));
             }
         }
 
         this.history = hData;
         this.received = hData.map(name => this.getPlant(name));
 
-        let allPlants = Object.values(this.garden).map(p => p.name);
+        let allPlants = Object.values(this.plants).map(p => p.name);
         let recPlants = new Set(this.received.map(p => p.name));
 
         this.remaining = Array
@@ -46,7 +46,7 @@ export default class Garden {
     }
 
     getPlant(pname){
-        return this.garden[pname.toLowerCase()];
+        return this.plants[pname.toLowerCase()];
     }
 
     bestLayout(p1, p2){
@@ -121,12 +121,16 @@ export default class Garden {
 
     getMutsByIngs(ingredients){
         let mutations = [];
-        for(let plant of this.garden.values()){
+        for(let plant of this.plants.values()){
             let mut = plant.mutatesFrom(ingredients);
             if(mut != false) mutations.push({plant: plant, mutation: mut});
         }
 
         return mutations;
+    }
+
+    getPlants(){
+        return Object.values(this.plants);
     }
 
     // TODO: Implement
