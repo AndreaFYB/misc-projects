@@ -245,124 +245,124 @@
     },
     "mutations": {
         "Baker's Wheat": [
-            "0.2 ==> Baker's Wheat!2@False",
-            "0.05 ==> Thumbcorn!2@False"
+            "0.2 ==> Baker's Wheat, >= 2, Mature",
+            "0.05 ==> Thumbcorn, >= 2, Mature"
         ],
         "Thumbcorn": [
-            "0.05 ==> Baker's Wheat!2@False",
-            "0.1 ==> Thumbcorn!2@False",
-            "0.02 ==> Cronerice!2@False"
+            "0.05 ==> Baker's Wheat, >= 2, Mature",
+            "0.1 ==> Thumbcorn, >= 2, Mature",
+            "0.02 ==> Cronerice, >= 2, Mature"
         ],
         "Cronerice": [
-            "0.01 ==> Baker's Wheat!1@M && Thumbcorn!1@M"
+            "0.01 ==> Baker's Wheat, >= 1, Mature && Thumbcorn, >= 1, Mature"
         ],
         "Gildmillet": [
-            "0.03 ==> Cronerice!1@M && Thumbcorn!1@M"
+            "0.03 ==> Cronerice, >= 1, Mature && Thumbcorn, >= 1, Mature"
         ],
         "Clover": [
-            "0.03 ==> Baker's Wheat!1@M && Gildmillet!1@M",
-            "0.007 ==> Clover!2@False && Clover!<5@Any"
+            "0.03 ==> Baker's Wheat, >= 1, Mature && Gildmillet, >= 1, Mature",
+            "0.007 ==> Clover, >= 2, Mature && Clover, < 5, Any"
         ],
         "Golden Clover": [
-            "0.0007 ==> Baker's Wheat!1@M && Gildmillet!1@M",
-            "0.0001 ==> Clover!2-4@False",
-            "0.0007 ==> Clover!4@False"
+            "0.0007 ==> Baker's Wheat, >= 1, Mature && Gildmillet, >= 1, Mature",
+            "0.0001 ==> Clover, ~ 2-4, Mature",
+            "0.0007 ==> Clover, >= 4, Mature"
         ],
         "Shimmerlily": [
-            "0.02 ==> Clover!1@M && Gildmillet!1@M"
+            "0.02 ==> Clover, >= 1, Mature && Gildmillet, >= 1, Mature"
         ],
         "Elderwort": [
-            "0.01 ==> Shimmerlily!1@M && Cronerice!1@M",
-            "0.002 ==> Wrinklegill!1@M && Cronerice!1@M"
+            "0.01 ==> Shimmerlily, >= 1, Mature && Cronerice, >= 1, Mature",
+            "0.002 ==> Wrinklegill, >= 1, Mature && Cronerice, >= 1, Mature"
         ],
         "Bakeberry": [
-            "0.001 ==> Baker's Wheat!2@False"
+            "0.001 ==> Baker's Wheat, >= 2, Mature"
         ],
         "Chocoroot": [
-            "0.1 ==> Baker's Wheat!1@M && Brown Mold!1@Any"
+            "0.1 ==> Baker's Wheat, >= 1, Mature && Brown Mold, >= 1, Any"
         ],
         "White Chocoroot": [
-            "0.1 ==> Chocoroot!1@M && White Mildew!1@Any"
+            "0.1 ==> Chocoroot, >= 1, Mature && White Mildew, >= 1, Any"
         ],
         "Meddleweed": [
-            "0.15 ==> Meddleweed!1@False && Meddleweed!<3@Any"
+            "0.15 ==> Meddleweed, >= 1, Mature && Meddleweed, < 3, Any"
         ],
         "Whiskerbloom": [
-            "0.01 ==> Shimmerlily!1@M && White Chocoroot!1@M"
+            "0.01 ==> Shimmerlily, >= 1, Mature && White Chocoroot, >= 1, Mature"
         ],
         "Chimerose": [
-            "0.05 ==> Shimmerlily!1@M && Whiskerbloom!1@M",
-            "0.005 ==> Chimerose!2@False"
+            "0.05 ==> Shimmerlily, >= 1, Mature && Whiskerbloom, >= 1, Mature",
+            "0.005 ==> Chimerose, >= 2, Mature"
         ],
         "Nursetulip": [
-            "0.05 ==> Whiskerbloom!2@False"
+            "0.05 ==> Whiskerbloom, >= 2, Mature"
         ],
         "Drowsyfern": [
-            "0.005 ==> Chocoroot!1@M && Keenmoss!1@M"
+            "0.005 ==> Chocoroot, >= 1, Mature && Keenmoss, >= 1, Mature"
         ],
         "Wardlichen": [
-            "0.005 ==> Cronerice!1@M && Keenmoss!1@M",
-            "0.005 ==> Cronerice!1@M && White Mildew!1@M",
-            "0.05 ==> Wardlichen!!1@M"
+            "0.005 ==> Cronerice, >= 1, Mature && Keenmoss, >= 1, Mature",
+            "0.005 ==> Cronerice, >= 1, Mature && White Mildew, >= 1, Mature",
+            "0.05 ==> Wardlichen, = 1, Mature"
         ],
         "Keenmoss": [
-            "0.1 ==> Green Rot!1@M && Brown Mold!1@M",
-            "0.05 ==> Keenmoss!!1@M"
+            "0.1 ==> Green Rot, >= 1, Mature && Brown Mold, >= 1, Mature",
+            "0.05 ==> Keenmoss, = 1, Mature"
         ],
         "Queenbeet": [
-            "0.01 ==> Bakeberry!1@M && Chocoroot!1@M"
+            "0.01 ==> Bakeberry, >= 1, Mature && Chocoroot, >= 1, Mature"
         ],
         "Juicy Queenbeet": [
-            "0.001 ==> Queenbeet!8@False"
+            "0.001 ==> Queenbeet, >= 8, Mature"
         ],
         "Duketater": [
-            "0.001 ==> Queenbeet!2@False"
+            "0.001 ==> Queenbeet, >= 2, Mature"
         ],
         "Shriekbulb": [
-            "0.001 ==> Wrinklegill!1@M && Elderwort!1@M",
-            "0.001 ==> Elderwort!5@False",
-            "0.005 ==> Duketater!3@Any",
-            "0.002 ==> Doughshroom!4@Any",
-            "0.001 ==> Queenbeet!5@False",
-            "0.005 ==> Shriekbulb!!1@M"
+            "0.001 ==> Wrinklegill, >= 1, Mature && Elderwort, >= 1, Mature",
+            "0.001 ==> Elderwort, >= 5, Mature",
+            "0.005 ==> Duketater, >= 3, Any",
+            "0.002 ==> Doughshroom, >= 4, Any",
+            "0.001 ==> Queenbeet, >= 5, Mature",
+            "0.005 ==> Shriekbulb, = 1, Mature"
         ],
         "Tidygrass": [
-            "0.002 ==> Baker's Wheat!1@M && White Chocoroot!1@M"
+            "0.002 ==> Baker's Wheat, >= 1, Mature && White Chocoroot, >= 1, Mature"
         ],
         "Everdaisy": [
-            "0.002 ==> Tidygrass!3@False && Elderwort!3@False"
+            "0.002 ==> Tidygrass, >= 3, Mature && Elderwort, >= 3, Mature"
         ],
         "White Mildew": [
-            "0.5 ==> Brown Mold!1@M && White Mildew!<2@Any"
+            "0.5 ==> Brown Mold, >= 1, Mature && White Mildew, < 2, Any"
         ],
         "Brown Mold": [
-            "0.5 ==> White Mildew!1@M && Brown Mold!<2@Any"
+            "0.5 ==> White Mildew, >= 1, Mature && Brown Mold, < 2, Any"
         ],
         "Crumbspore": [
-            "0.07 ==> Crumbspore!!1@M",
-            "0.005 ==> Doughshroom!2@False"
+            "0.07 ==> Crumbspore, = 1, Mature",
+            "0.005 ==> Doughshroom, >= 2, Mature"
         ],
         "Doughshroom": [
-            "0.005 ==> Crumbspore!2@False",
-            "0.07 ==> Doughshroom!!1@M"
+            "0.005 ==> Crumbspore, >= 2, Mature",
+            "0.07 ==> Doughshroom, = 1, Mature"
         ],
         "Glovemorel": [
-            "0.01 ==> Crumbspore!1@M && Thumbcorn!1@M"
+            "0.01 ==> Crumbspore, >= 1, Mature && Thumbcorn, >= 1, Mature"
         ],
         "Cheapcap": [
-            "0.03 ==> Crumbspore!1@M && Shimmerlily!1@M"
+            "0.03 ==> Crumbspore, >= 1, Mature && Shimmerlily, >= 1, Mature"
         ],
         "Fool Bolete": [
-            "0.02 ==> Doughshroom!1@M && Green Rot!1@M"
+            "0.02 ==> Doughshroom, >= 1, Mature && Green Rot, >= 1, Mature"
         ],
         "Wrinklegill": [
-            "0.06 ==> Crumbspore!1@M && Brown Mold!1@M"
+            "0.06 ==> Crumbspore, >= 1, Mature && Brown Mold, >= 1, Mature"
         ],
         "Green Rot": [
-            "0.05 ==> White Mildew!1@M && Clover!1@M"
+            "0.05 ==> White Mildew, >= 1, Mature && Clover, >= 1, Mature"
         ],
         "Ichorpuff": [
-            "0.002 ==> Elderwort!1@M && Crumbspore!1@M"
+            "0.002 ==> Elderwort, >= 1, Mature && Crumbspore, >= 1, Mature"
         ]
     },
     "history": [

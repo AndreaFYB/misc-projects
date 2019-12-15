@@ -305,53 +305,17 @@ class Mutation:
         self.conditions = []
 
         for x in plants:
-            if "!" in x and "!!" not in x:
-                xsplit = x.split("!")
-
-                plant = garden.get_plant(xsplit[0])
-                quantity = xsplit[1]
-                status = "M"
-                lessT = False
-
-                if "@" in quantity:
-                    flags = quantity.split("@")
-                    quantity = flags[0]
-                    status = flags[1]
-
-                if "<" in quantity:
-                    lessT = True
-                    quantity = quantity.split("<")[1]
-
-                if "-" in quantity:
-                    rangeQ = quantity.split("-")
-                    self.conditions += [self.Condition(plant, rangeQ[0], status, lessT, to=rangeQ[1])]
-                    continue
-                
-                self.conditions += [self.Condition(plant, quantity, status, lessT)]
-            
-            elif "!!" in x:
-                xsplit = x.split("!!")
-
-                plant = garden.get_plant(xsplit[0])
-                quantity = xsplit[1]
-                status = "M"
-
-                if "@" in quantity:
-                    xsplit2 = quantity.split("@")
-                    quantity = xsplit2[0]
-                    status = xsplit2[1]
-
-                self.conditions += [self.Condition(plant, quantity, exact = True)]
-
-            elif "@" in x:
-                xsplit = x.split("@")
-
-                plant = garden.get_plant(xsplit[0])
-
-                self.conditions += [self.Condition(plant, status = xsplit[1])]
-
-            else:
-                self.conditions += [self.Condition(garden.get_plant(x))]
+            name, amount, status = x.split(", ")
+            flag, quantity = amount.split(" ")
+            if flag == "<":
+                self.conditions += [self.Condition(garden.get_plant(name), quantity, status, lessT=True)]
+            elif flag == "=":
+                self.conditions += [self.Condition(garden.get_plant(name), quantity, status, exact=True)]
+            elif flag == "~":
+                _from, to = quantity.split("-")
+                self.conditions += [self.Condition(garden.get_plant(name), _from, status, to=to)]
+            elif flag == ">=":
+                self.conditions += [self.Condition(garden.get_plant(name), quantity, status)]
 
     def __repr__(self):
         string = ""
@@ -395,18 +359,18 @@ class Mutation:
             details = {
                 "name" : con.plant.name,
                 "quan" : con.quantity,
-                "stat" : con.status,
+                "stat" : "Any" if con.status == "Any" else "Mature",
                 "to"   : con.to
             }
             template = ""
             if con.lessT is False and con.exact is False and con.to == -1:
-                template = "{d[name]}!{d[quan]}@{d[stat]}"
+                template = "{d[name]}, >= {d[quan]}, {d[stat]}"
             elif con.lessT is True:
-                template = "{d[name]}!<{d[quan]}@{d[stat]}"
+                template = "{d[name]}, < {d[quan]}, {d[stat]}"
             elif con.exact is True:
-                template = "{d[name]}!!{d[quan]}@{d[stat]}"
+                template = "{d[name]}, = {d[quan]}, {d[stat]}"
             elif con.to > 0:
-                template = "{d[name]}!{d[quan]}-{d[to]}@{d[stat]}"
+                template = "{d[name]}, ~ {d[quan]}-{d[to]}, {d[stat]}"
             notations += [template.format(d=details)]
         
         string += " && ".join(notations)
@@ -414,30 +378,24 @@ class Mutation:
 
 
     class Condition:
-        def __init__(self, plant, quantity = 1, status = "M", lessT = False, exact = False, to = -1):
+        def __init__(self, plant, quantity = 1, status = "Mature", lessT = False, exact = False, to = -1):
             self.plant = plant
             self.quantity = int(quantity)
             self.status = status
             self.exact = exact
             self.lessT = lessT
+            self.greaterTOE = True if not lessT and not exact and to == -1 else False
             self.to = -1 if int(to) <= int(quantity) else int(to)
 
         def __repr__(self):
-            status_str = ""
-
-            if self.status == "M":
-                status_str = "Mature "
-            elif self.status == "Any":
-                status_str = "Any "
-
-            if self.exact is False and self.lessT is False and self.to == -1:
-                return "%s or more of %s%s" % (self.quantity, status_str, self.plant.name)
+            if self.greaterTOE:
+                return "%s or more of %s %s" % (self.quantity, self.status, self.plant.name)
             elif self.exact is True:
-                return "Exactly %s of %s%s" % (self.quantity, status_str, self.plant.name)
+                return "Exactly %s of %s %s" % (self.quantity, self.status, self.plant.name)
             elif self.lessT is True:
-                return "Less than %s of %s%s" % (self.quantity, status_str, self.plant.name)
+                return "Less than %s of %s %s" % (self.quantity, self.status, self.plant.name)
             elif self.to > -1:
-                return "Between %s and %s of %s%s" % (self.quantity, self.to, status_str, self.plant.name)
+                return "Between %s and %s of %s %s" % (self.quantity, self.to, self.status, self.plant.name)
 
 # utils
 def word_to_num(num, extension):

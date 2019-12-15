@@ -79,29 +79,36 @@ It accepts a list of `Plant` objects as parameter, and if this list satisfies th
 
 An example of a plant name in Mutation Notation is as follows:
 
-`Brown Mold!2@Any`
+`Brown Mold, >= 2, Any`
 
-The above means "*Any 2 Brown Mold plants*"
+The above means "*Any 2 or more Brown Mold plants*"
 
 An explanation of the notation:
-- In every name, there must be the actual plant name, which will come first.
-- If there is a quantity constraint, it must be shown via a symbol after the name:
-    - `!n` : n or more of this plant.
-    - `!!n` : exactly n of this plant.
-    - `!<n` : less than n of this plant.
-    - Without an explicitly mentioned quantity constraint, it will be assumed to be *1 or more*.
-- There can be a status constraint, which shows whether the plant needs to be Mature, or more.
-    - `@M` : Mature
-    - `@Any` : Any (Mature and below)
-    - Without an explicitly mentioned status constraint, it will be assumed to be *Mature*
-- Status constraints come **after** quantity constraints.
+- The notation has 3 parts: Name, Quantity, Status.
+- Name is self-explanatory; it represents the name of the plant.
+- Quantity has two parts, the flag (>= (GreaterThanOrEqual), < (LessThan), = (Exactly), ~ (Range)) and the amount (A number, or if it's a range, number-number.)
+- Status can be two things for now; **Mature** or **Any**.
+
+Note that the mutation rate and the list of plant names above are retrieved from the Full Mutation Notation, which looks like follows:
+
+```json
+"0.002 ==> Baker's Wheat, >= 1, Mature && White Chocoroot, >= 1, Mature"
+```
+
+In essence, Full Mutation Notation adds two parts: The mutation rate, and `&&`. The mutation rate is always at the start, and has the form `Number ==>`.
+The `&&` operator however specifies any additional plants that might be needed. So the example shown above translates to this:
+
+```
+1 or more mature Baker's Wheat, and 1 or more mature White Chocoroot, has a mutation rate of 0.002 per tick.
+```
 
 More examples of the notation:
-- Exactly 3 of Cronerice = `Cronerice!!3`
-- 2 or more of Thumbcorn = `Thumbcorn!2`
-- Less than 5 of any Brown Mold = `Brown Mold!<5@Any`
+- Exactly 3 of mature Cronerice = `Cronerice, = 3, Mature`
+- 2 or more of mature Thumbcorn = `Thumbcorn, >= 2, Mature`
+- Less than 5 of any Brown Mold = `Brown Mold, < 5, Any`
 
-Every plant name in Mutation Notation will be converted into a `Condition` object. A `Mutation` object will contain a list of these conditions, and the mutation rate.
+For every element in the list of plant names, a `Condition` will be constructed. In essence, this means that in _Full Mutation Notation_, the number of 
+conditions for a mutation is the number of `&&` operators plus one.
 
 ### Condition
 A `Condition` is only used within a `Mutation` object, in order to store the prerequisites for the Mutation. Every condition specifies certain amount of parameters:
@@ -111,6 +118,8 @@ A `Condition` is only used within a `Mutation` object, in order to store the pre
 - `lessT` : A flag. If `True`, then there need to be less than `quantity` of `plant`.
 - `exactT` : A flag. If `True`, then there need to be exactly `quantity` of `plant`.
 - `to`  : A sort-of flag. If set to a value higher than `quantity` then a range of quantities is specified for the plant.
+
+To note, if the default is used (meaning `quantity` or more of `plant` are required), then `greaterTOE`, an attribute of the `Condition`, is set to `True`.
 
 Some examples to explain it better.
 - `Condition(plant=P, quantity=4, lessT=True)` : Less than 4 of the Mature plant `P` are required.
@@ -153,9 +162,9 @@ mutation += [Name,
 # In the future
 - Update this README more thoroughly
 - Add support for more complex mutations
-    - Note: A *simple* mutation is one which requires two ingredients, either of the same plant, or different plants. The complication here is that there are two approaches to handling complex mutations, and their optimal layouts.
-        - **A** : The layouts are hardcoded for each complex mutation. Requires a lot of time and tedious work.
-        - **B** : An algorithm to find the best layout for any and all mutations is created and implemented. This may sound easy, as it would automate all the best layouts, but it would be difficult to engineer, and may also require a lot of time, albeit it being less tedious.
+    - Currently, the mutations that are supported have the following properties:
+      - Have only 1 or 2 plants.
+      - 1 of each plant is needed.
+    - This is because the grid generation only takes into account the hardcoded positions that were used. An alternative is to add different positions for more complicated mutations, which may be tedious, while also requiring some analysis as to which arrangement is best. Until this is added, the placement of plants for more complex mutations should be done manually.
 - Include plant descriptions and effects
     - This includes the flavour text that accompanies the plant, as well as the list of effects the plant in question has. Whether these effects will be used in-program, or simply be stored as a string is unsure.
-- ~~Find which plant mutations are currently achievable~~
