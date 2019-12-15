@@ -53,7 +53,7 @@ class Plant:
 
     # Prints the mutations that result in this plant in a healthy format.
     def print_mutations(self):
-        print("{:-^70}".format(" Mutated from "))
+        print(format_header("Mutated from"))
 
         if self.muts is []:
             print("[No mutations registered]")
@@ -63,7 +63,7 @@ class Plant:
             if(x < len(self.muts)-1):
                 print()
 
-        print("{:-^70}".format(""))
+        print(format_header(""))
 
     # Retrieves the actual cost of planting taking into account the cps.
     def get_cost(self, cps):
@@ -467,7 +467,7 @@ def calculate_total_chance(wc, p1, p2, empty, mut_rate, mut_name):
     max_chance = modifier * mut_rate * empty * max_ticks
     ins_chance = modifier * mut_rate * empty * instant if instant > 0 else 0
 
-    print("{:-^70}".format(" Mutating {} ".format(mut_name)))
+    print(format_header("Mutating {}".format(mut_name)))
     print("Maximum chance = %.3f" % (max_chance))
     print("Maximum chance (if planted instantly) = %.3f" % (ins_chance))
     print("\nChance lost by being planted instantly = %.3f" % (max_chance - ins_chance))
@@ -478,7 +478,7 @@ def calculate_total_chance(wc, p1, p2, empty, mut_rate, mut_name):
         print("\t{:15s} : {}".format("(Fertiliser)", get_time(3 * diff_matu_ticks * 60)))
         print("\t{:15s} : {}".format("(Clay)", get_time(15 * diff_matu_ticks * 60)))
         print("\t{:15s} : {}".format("(Other)", get_time(5 * diff_matu_ticks * 60)))
-    print("{:-^70}".format(""))
+    print(format_header(""))
     
 def print_time(prompt, offset=0):
     print("{}{}".format(prompt, get_time(offset)))
@@ -571,22 +571,31 @@ def auto_garden(garden):
     for con in chosen_mut.conditions:
         b___plants += [con.plant]*con.quantity
 
-    # It only selects the first two plants in the list.
-    # In the future, the entire list should be made use of.
-    # It will show the total list of ingredients required for the mutation.
-    p1, p2 = b___plants[0], b___plants[1]
+    if len(b___plants) == 2:
+        # It only selects the first two plants in the list.
+        # In the future, the entire list should be made use of.
+        # It will show the total list of ingredients required for the mutation.
+        p1, p2 = b___plants[0], b___plants[1]
 
-    bl = garden.best_layout(p1, p2)
-    usable = bl["usable"]
+        bl = garden.best_layout(p1, p2)
+        usable = bl["usable"]
 
-    calculate_total_chance(wood_chips, p1, p2, usable, chosen_mut.mut_rate, pl_name.title())
-    print("Best layout (-X- means a possible unwanted mutation)\n{}".format(bl["plot"]))
-    print("Total cost : {}".format(bl["cost"]))
+        calculate_total_chance(wood_chips, p1, p2, usable, chosen_mut.mut_rate, pl_name.title())
+        print("Best layout (-X- means a possible unwanted mutation)\n{}".format(bl["plot"]))
+        print("Total cost : {}".format(bl["cost"]))
+    else:
+        print(format_header("WARNING"))
+        print("Chance calculation and plot placement aren't shown because the current mutation isn't supported.")
+        print("Please use the details shown above to plant them on your own for now, until more complicated mutations are implemented.")
 
 def get_mutations(garden):
     name = input("Which plant do you want to get? : ")
     plant = garden.get_plant(name)
     plant.print_mutations()
+
+def format_header(name):
+    n = name if name is "" else " " + name + " "
+    return "{:-^120}".format(n)
 
 # main
 if __name__ == "__main__":
@@ -600,7 +609,7 @@ if __name__ == "__main__":
 
     while(True):
         # INFO header
-        print("{:-^70}".format(" INFO "))
+        print(format_header("INFO"))
 
         print_time("Current time : ")
         print("CPS : {}".format(num_to_word(garden.cps)))
@@ -608,7 +617,7 @@ if __name__ == "__main__":
         print("Garden Dimensions : {}".format(garden.plots.dimensions))
 
         # MENU header
-        print("{:-^70}".format(" MENU "))
+        print(format_header("MENU"))
 
         print("Pick a choice!")
         print("\t    1. Calculate mutation possibility (by entering plants)")
