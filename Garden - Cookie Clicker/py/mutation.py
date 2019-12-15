@@ -3,6 +3,13 @@ import json
 
 # classes
 class Plant:
+    # The following arguments are as follows:
+    # name: name of plant
+    # mat: amount of ticks to reach maturity
+    # life: amount of ticks till end of life
+    # cps_cost: cost depending on cps (for example, n * cps)
+    # min_cost: minimum cost of the plant
+    # code: code used to represent plant in grid
     def __init__(self, name, mat, life, cps_cost, min_cost, code="PNT"):
         self.name = name
         self.mat = mat
@@ -31,9 +38,11 @@ class Plant:
     def compare_maturation_age(self, other):
         return self.compare(self.mat_age, other.mat_age)
 
+    # Adds mutation that results in this plant.
     def created_from(self, mutation):
         self.muts += [mutation]
 
+    # Prints the details of this plant, including its mutations.
     def print_details(self):
         print("%s" % (self.name))
         print("Matures in %d ticks" % (self.mat))
@@ -42,6 +51,7 @@ class Plant:
 
         self.print_mutations()
 
+    # Prints the mutations that result in this plant in a healthy format.
     def print_mutations(self):
         print("{:-^70}".format(" Mutated from "))
 
@@ -55,6 +65,7 @@ class Plant:
 
         print("{:-^70}".format(""))
 
+    # Retrieves the actual cost of planting taking into account the cps.
     def get_cost(self, cps):
         total_cost = cps * self.cps_cost * 60
         return self.min_cost if total_cost < self.min_cost else total_cost
@@ -101,13 +112,16 @@ class Grid:
         return string
 
 class Garden:
-    def __init__(self, filename="garden.json", level=None, dimensions=None):
+    # Initialises a garden using the "filename".
+    def __init__(self, filename="garden.json"):
         self.garden = {}
         self.load(filename)
 
+    # Retrieves a plant object with the same name.
     def get_plant(self, name):
         return self.garden[name.lower()]
 
+    # Finds the best layout for the plants.
     def best_layout(self, p1, p2):
         best_by_dimensions = {
             (2,2) : [(0,0,'a'), (1,1,'b')],
@@ -172,6 +186,7 @@ class Garden:
             "cost" : num_to_word(cost)
         }
 
+    # Gets mutations depending on the ingredients required.
     def get_mutations_by_ingredients(self, ingredients):
         mutations = []
         for _,v in self.garden.items():
@@ -181,6 +196,7 @@ class Garden:
     
         return mutations
     
+    # Saves the garden as a JSON file.
     def save_all_to_file(self, filename="garden.json"):
         file = open(filename, "w+")
 
@@ -191,10 +207,6 @@ class Garden:
         details = {
             "garden" : {
                 "level" : self.level,
-                "dimensions" : {
-                   "x" : self.plots.dimensions[0],
-                   "y" : self.plots.dimensions[1]
-                },
                 "cps" : num_to_word(self.cps)
             },
             "plants" : {},
@@ -228,6 +240,7 @@ class Garden:
 
         file.write(json.dumps(details, indent=4))
 
+    # Loads and initialises garden from a file.
     def load(self, name):
         data = open(name, "r+")
 
@@ -239,8 +252,7 @@ class Garden:
         h_data = data["history"]
 
         # Preparing garden data
-        self.level = g_data["level"]
-        self.plots = Grid(g_data["dimensions"]["x"], g_data["dimensions"]["y"], "-")
+        self.update_grid(int(g_data["level"]))
         cps = g_data["cps"].split(" ")
         self.cps = word_to_num(cps[0], cps[1])
 
@@ -255,12 +267,37 @@ class Garden:
 
                 self.garden[name.lower()].created_from(Mutation(self, m_nots, m_rate))
 
+        self.remaining = [p for _,p in self.garden.items()]
+
         self.history = h_data
-        self.received = [self.get_plant(n) for n in h_data if n != ""]
-        self.remaining = [self.get_plant(n) for n in
-            list(set([p.name for _,p in self.garden.items()]) -
-                set([p.name for p in self.received]))
-        ]
+        self.received = []
+        for name in h_data:
+            if name != "":
+                self.discovered(name)
+
+    # Used to specify a newly discovered plant.
+    def discovered(self, plantname):
+        # Adds plant to received
+        self.received += [self.get_plant(plantname)]
+        # Removes plant from remaining
+        self.remaining = [n for n in self.remaining if n.name.lower() != plantname.lower()]
+
+    # Updates the grid depending on the level of the garden
+    def update_grid(self, level):
+        self.level = level
+        level_to_plots = {
+            1:(2,2),
+            2:(3,2),
+            3:(3,3),
+            4:(4,3),
+            5:(4,4),
+            6:(5,4),
+            7:(5,5),
+            8:(6,5),
+            9:(6,6)
+        }
+        dimensions = (6,6) if self.level > 9 else level_to_plots[self.level]
+        self.plots = Grid(dimensions[0], dimensions[1], "-")
 
 class Mutation:
     def __init__(self, garden, plants, mut_rate):
@@ -622,6 +659,7 @@ if __name__ == "__main__":
         print("\t    4. Find out what plants remain")
         print("\t    5. Change CPS")
         print("\t    6. Add achieved plant!")
+        print("\t    7. Update level")
         print("\tOther. Quit")
         choice = input("Choice : ")
 
@@ -655,6 +693,11 @@ if __name__ == "__main__":
             garden.history += [plant_achieved]
             print("Saved plant!")
             time.sleep(2)
+
+        elif choice == "7":
+            new_level = int(input("Enter your new level : "))
+            garden.level = new_level
+            garden.update_grid()
 
         else:
             garden.save_all_to_file()

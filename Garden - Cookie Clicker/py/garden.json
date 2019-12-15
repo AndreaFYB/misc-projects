@@ -1,11 +1,7 @@
 {
     "garden": {
-        "level": "5",
-        "dimensions": {
-            "x": 4,
-            "y": 4
-        },
-        "cps": "2.473 nonillion"
+        "level": 3,
+        "cps": "8.630 trillion"
     },
     "plants": {
         "Baker's Wheat": {
@@ -371,27 +367,13 @@
     },
     "history": [
         "Baker's Wheat",
-        "Thumbcorn",
-        "Cronerice",
-        "Gildmillet",
-        "Clover",
-        "Shimmerlily",
-        "Chocoroot",
-        "White Chocoroot",
         "White Mildew",
         "Brown Mold",
-        "Meddleweed",
-        "Whiskerbloom",
-        "Chimerose",
-        "Nursetulip",
-        "Keenmoss",
-        "Crumbspore",
-        "Doughshroom",
-        "Wrinklegill",
-        "Green Rot",
-        "Elderwort",
-        "Drowsyfern",
-        "Bakeberry",
-        "Queenbeet"
+        "THUMBCORN",
+        "Chocoroot",
+        "White Chocoroot",
+        "Cronerice",
+        "Gildmillet",
+        "Clover"
     ]
 }
