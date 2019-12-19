@@ -464,8 +464,8 @@ def calculate_total_chance(wc, p1, p2, empty, mut_rate, mut_name):
         else:
             instant = max_ticks
 
-    max_chance = modifier * mut_rate * empty * max_ticks
-    ins_chance = modifier * mut_rate * empty * instant if instant > 0 else 0
+    max_chance = 1 - (((1 - mut_rate) ** (empty * max_ticks)) / modifier)
+    ins_chance = 1 - (((1 - mut_rate) ** (empty * instant if instant > 0 else 0)) / modifier)
 
     print(format_header("Mutating {}".format(mut_name)))
     print("Maximum chance = %.3f" % (max_chance))
@@ -580,6 +580,8 @@ def auto_garden(garden):
         bl = garden.best_layout(p1, p2)
         usable = bl["usable"]
 
+        print(p2.name)
+
         calculate_total_chance(wood_chips, p1, p2, usable, chosen_mut.mut_rate, pl_name.title())
         print("Best layout (-X- means a possible unwanted mutation)\n{}".format(bl["plot"]))
         print("Total cost : {}".format(bl["cost"]))
@@ -627,20 +629,21 @@ if __name__ == "__main__":
         print("\t    5. Change CPS")
         print("\t    6. Add achieved plant!")
         print("\t    7. Update level")
+        print("\t    8. Show achievable remaining plants")
         print("\tOther. Quit")
         choice = input("Choice : ")
 
         if choice == "1":
             basic_garden(garden)
-            time.sleep(3)
+            time.sleep(1)
 
         elif choice == "2":
             auto_garden(garden)
-            time.sleep(3)
+            time.sleep(1)
 
         elif choice == "3":
             get_mutations(garden)
-            time.sleep(3)
+            time.sleep(1)
 
         elif choice == "4":
             for p in garden.remaining:
@@ -648,23 +651,30 @@ if __name__ == "__main__":
                 achievable = p.achievable_by(garden.received)
                 ach_string = "YES" if achievable[1] else "REQUIRED => " + ", ".join(achievable[0])
                 print("\tAchievable? : {}".format(ach_string))
-            time.sleep(3)
+            time.sleep(1)
 
         elif choice == "5":
             cps = input("Enter your CPS : ").split(" ")
             garden.cps = word_to_num(float(cps[0]), cps[1])
-            time.sleep(2)
+            time.sleep(1)
 
         elif choice == "6":
             plant_achieved = input("Enter name of plant : ")
-            garden.history += [plant_achieved]
+            garden.discovered(plant_achieved)
             print("Saved plant!")
-            time.sleep(2)
+            time.sleep(1)
 
         elif choice == "7":
             new_level = int(input("Enter your new level : "))
-            garden.level = new_level
-            garden.update_grid()
+            garden.update_grid(new_level)
+            garden.save_all_to_file()
+
+        elif choice == "8":
+            print(format_header("ACHIEVABLE PLANTS"))
+            for p in garden.remaining:
+                achievable = p.achievable_by(garden.received)
+                if achievable[1]: print("[{:^18}]".format(p.name)) 
+            time.sleep(1)
 
         else:
             garden.save_all_to_file()
